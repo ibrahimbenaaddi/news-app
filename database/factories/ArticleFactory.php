@@ -16,8 +16,12 @@ class ArticleFactory extends Factory
      */
     public function definition(): array
     {
+        $category = ['Technology','Business','Health','Sports','Entertainment','Environment'] ;
+        $key = random_int(0,5);
         return [
-            //
+            'title' => fake()->sentence,
+            'body' => fake()->paragraphs(10,true),
+            'category' => $category[$key]
         ];
     }
 }

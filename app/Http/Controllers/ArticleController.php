@@ -3,16 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Services\ArticleService;
+
 
 class ArticleController extends Controller
 {
+    private ArticleService $service ;
+
+    public function __construct(){
+        $this->service = new ArticleService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        try {
+            $articles = $this->service->getAllArticles();
+            if(empty($articles)) throw new Exception('No Articles retrived');
+            return view('home',compact('articles'));
+        } catch (Exception $err) {
+            // return bc i use blade and i can add if statment to check by empty()
+            Log::error('The Error  in ArticleController (index) is :' . $err->getMessage());
+            return view('home',compact('articles'));
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -133,25 +134,30 @@
             border-bottom: 3px solid #3a86ff;
         }
 
+        .card-category {
+            display: inline-block;
+            background-color: #3a86ff;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            align-self: flex-start;
+        }
+
         .card-content {
             padding: 1.5rem;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
-        
+
         .card-title {
             font-size: 1.4rem;
             margin-bottom: 1rem;
             color: #fff;
             line-height: 1.4;
-        }
-
-        .card-excerpt {
-            color: #b0b0b0;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-            flex-grow: 1;
         }
 
         .card-footer {
@@ -222,6 +228,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar">
@@ -240,22 +247,27 @@
     <!-- Main Content -->
     <main class="container">
         <h2 class="page-title">Today's Top Stories</h2>
-        
+        @if(empty($articles))
+            <h1>Ops ,No articles Now At this moment Come Back Later , Thank you</h1>
+        @else
         <div class="articles-grid">
+
             <!-- Article Card Template -->
-             @foreach($articles as $article)
-                <article class="article-card">
-                    <img src=""  class="card-image">
-                    <div class="card-content">
-                        <h3 class="card-title">AI Breakthrough: New Model Outperforms Humans in Creative Tasks</h3>
-                        <p class="card-excerpt">Researchers have developed an artificial intelligence system that demonstrates unprecedented creative capabilities, raising new questions about the nature of creativity and machine intelligence.</p>
-                        <div class="card-footer">
-                            <span class="card-date">June 15, 2023</span>
-                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                        </div>
+            @foreach($articles as $article)
+            <article class="article-card">
+                <img src="{{ asset('storage/' . ($article->image ?? 'ArticlesImages/default.png')) }}" class="card-image">
+                <div class="card-content">
+                    <span class="card-category">{{ $article->category }}</span>
+                    <h3 class="card-title">{{ $article->title }}</h3>
+                    <div class="card-footer">
+                        <span class="card-date">{{ $article->created_at->format('F d, Y') }}</span>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
                     </div>
-                </article>
+                </div>
+            </article>
             @endforeach
+        </div>
+        @endif
     </main>
 
     <!-- Footer -->
@@ -263,4 +275,5 @@
         <p>© 2025/2026 NewsApp. All rights reserved. | Stay informed with the latest news from around the world.</p>
     </footer>
 </body>
+
 </html>

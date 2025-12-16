@@ -11,9 +11,10 @@ use App\Services\ArticleService;
 
 class ArticleController extends Controller
 {
-    private ArticleService $service ;
+    private ArticleService $service;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->service = new ArticleService;
     }
 
@@ -24,12 +25,12 @@ class ArticleController extends Controller
     {
         try {
             $articles = $this->service->getAllArticles();
-            if(empty($articles)) throw new Exception('No Articles retrived');
-            return view('home',compact('articles'));
+            if (empty($articles)) throw new Exception('No Articles retrived');
+            return view('home', compact('articles'));
         } catch (Exception $err) {
             // return bc i use blade and i can add if statment to check by empty()
             Log::error('The Error  in ArticleController (index) is :' . $err->getMessage());
-            return view('home',compact('articles'));
+            return view('home', compact('articles'));
         }
     }
 
@@ -52,9 +53,31 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
+    public function find(Request  $request)
+    {
+        try {
+
+            $articles = $this->service->findByTitle($request->title);
+            if (empty($articles)) throw new Exception('No Articles retrived');
+            return view('home', compact('articles'));
+        } catch (Exception $err) {
+            Log::error('The Error  in ArticleController (find) is :' . $err->getMessage());
+            return view('home', compact('articles'));
+        }
+    }
+    /**
+     * Display the specified resource.
+     */
     public function show(Article $article)
     {
-        //
+        try {
+            // related articles by Category
+            $relatedArticles = $this->service->filterByCategory($article->category);
+            return view('article', compact(['article', 'relatedArticles']));
+        } catch (Exception $err) {
+            Log::error('The Error  in ArticleController (show) is :' . $err->getMessage());
+            return redirect()->route('home');
+        }
     }
 
     /**

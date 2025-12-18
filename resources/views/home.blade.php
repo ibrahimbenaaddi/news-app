@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('title')
-    NewsApp - Latest Articles
+NewsApp - Latest Articles
 @endsection
 
 
@@ -159,6 +159,9 @@
         margin-bottom: 1rem;
         color: #fff;
         line-height: 1.4;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
     }
 
     .card-footer {
@@ -247,7 +250,7 @@
 
 @section('main')
 <h2 class="page-title">Today's Top Stories</h2>
-@if(count($articles) == 0)
+@if(empty($articles))
 <h1>Ops ,No articles Now At this moment Come Back Later , Thank you</h1>
 @else
 <div class="articles-grid">
@@ -267,6 +270,9 @@
     </article>
     @endforeach
 </div>
+@if($articles->count() > 10)
+{{$articles->links()}}
+@endif
 @endif
 
 @endsection

@@ -212,6 +212,9 @@
     }
 
     .article-content p {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
         margin-bottom: 1.5rem;
     }
 
@@ -384,14 +387,16 @@
     @foreach($relatedArticles as $relatedArticle)
     <div class="related-articles">
         <article class="related-card">
-            <img src="{{ asset('storage/' . ($article->image ?? 'ArticlesImages/default.png')) }}">
-
+            <img src="{{ asset('storage/' . ($relatedArticle->image ?? 'ArticlesImages/default.png')) }}">
             <div class="related-card-content">
                 <h3>{{ $relatedArticle->title}}</h3>
                 <a href="{{ route('show', $relatedArticle) }}" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
             </div>
         </article>
         @endforeach
+        @if($relatedArticles->count() > 10)
+        {{$relatedArticles->links()}}
+        @endif
 </section>
 @endunless
 @endsection

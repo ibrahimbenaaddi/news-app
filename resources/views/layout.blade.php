@@ -11,13 +11,16 @@
 </head>
 
 <body>
+    @hasSection('nav')
     <!-- Navbar -->
     <nav class="navbar">
         @yield('nav')
     </nav>
+    @endif
+
 
     <!-- Main Content -->
-    <main class="container">
+    <main class="container" >
         @yield('main')
     </main>
 

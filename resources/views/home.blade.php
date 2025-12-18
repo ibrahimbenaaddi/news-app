@@ -250,7 +250,8 @@ NewsApp - Latest Articles
 
 @section('main')
 <h2 class="page-title">Today's Top Stories</h2>
-@if(empty($articles))
+{{ $articles = null }}
+@if(blank($articles))
 <h1>Ops ,No articles Now At this moment Come Back Later , Thank you</h1>
 @else
 

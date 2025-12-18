@@ -1,7 +1,7 @@
 @extends('layoutdash')
 
 @section('dashboardSection')
-@if(empty($articles))
+@if(blank($articles))
 <h1>Ops ,No articles Now At this moment Come Back Later , Thank you</h1>
 @else
 @if (session('error'))

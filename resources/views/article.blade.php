@@ -380,7 +380,7 @@
     <p>{{ $article->body}}</p>
 </article>
 
-@unless(empty($relatedArticles))
+@unless(blank($relatedArticles))
 <!-- Related Articles -->
 <section class="related-section">
     <h2 class="section-title">Related Articles</h2>

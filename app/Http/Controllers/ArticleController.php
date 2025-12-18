@@ -33,12 +33,12 @@ class ArticleController extends Controller
     public function index()
     {
         try {
-            $articles = $this->service->getAllArticles() ?? null ;
-            // the usage of isEmpty() on null give us Error insted use empty()
-            if (empty($articles)) throw new Exception(self::ERROR['index']);
+            $articles = $this->service->getAllArticles();
+            // the usage of isEmpty() on null give us Error insted use blank() handle null empty array & collection 
+            if (blank($articles)) throw new Exception(self::ERROR['index']);
             return view('dashboard', compact('articles'));
         } catch (Exception $err) {
-            // return bc i use blade and i can add if statment to check by empty()
+            // return bc i use blade and i can add if statment to check by blank()
             Log::error('The Error  in AdminController (index) is :' . $err->getMessage());
             return view('dashboard', compact('articles'));
         }
@@ -50,11 +50,11 @@ class ArticleController extends Controller
     public function home()
     {
         try {
-            $articles = $this->service->getAllArticles() ?? null ;
-            if (empty($articles)) throw new Exception(self::ERROR['index']);
+            $articles = $this->service->getAllArticles();
+            if (blank($articles)) throw new Exception(self::ERROR['index']);
             return view('home', compact('articles'));
         } catch (Exception $err) {
-            // return bc i use blade and i can add if statment to check by empty()
+            // return bc i use blade and i can add if statment to check by blank()
             Log::error('The Error  in ArticleController (home) is :' . $err->getMessage());
             return view('home', compact('articles'));
         }
@@ -96,7 +96,7 @@ class ArticleController extends Controller
                 return back()->with('error', 'plz enter the Title not string vide , Thank you');
             }
             $articles = $this->service->findByTitle($request->title);
-            if (empty($articles)) throw new Exception(self::ERROR['index']);
+            if (blank($articles)) throw new Exception(self::ERROR['index']);
             return view('home', compact('articles'));
         } catch (Exception $err) {
             Log::error('The Error  in ArticleController (find) is :' . $err->getMessage());
@@ -109,7 +109,7 @@ class ArticleController extends Controller
     public function show(Article $article)
     {
         try {
-            // related articles by Category / i add empty() on it in blade
+            // related articles by Category / i add blank() on it in blade
             $relatedArticles = $this->service->filterByCategory($article->category, $article->articleID) ?? null ;
             return view('article', compact(['article', 'relatedArticles']));
         } catch (Exception $err) {

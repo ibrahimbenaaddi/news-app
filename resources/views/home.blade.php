@@ -253,6 +253,13 @@ NewsApp - Latest Articles
 @if(empty($articles))
 <h1>Ops ,No articles Now At this moment Come Back Later , Thank you</h1>
 @else
+
+@if (session('error'))
+<div class="alert alert-danger">
+    {{ session('error') }}
+</div>
+@endif
+
 <div class="articles-grid">
 
     <!-- Article Card Template -->
@@ -270,9 +277,11 @@ NewsApp - Latest Articles
     </article>
     @endforeach
 </div>
-@if($articles->count() > 10)
-{{$articles->links()}}
+
+@if(!$articles->count() < 10) 
+{{ $articles->links()}}
 @endif
+
 @endif
 
 @endsection

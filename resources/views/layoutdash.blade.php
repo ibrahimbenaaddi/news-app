@@ -5,8 +5,7 @@ NewsApp Admin Dashboard
 @endSection
 
 @section('style')
-    <style>
-
+<style>
     * {
         margin: 0;
         padding: 0;
@@ -288,11 +287,15 @@ NewsApp Admin Dashboard
 
     table {
         width: 100%;
+        table-layout: fixed;
         border-collapse: collapse;
     }
 
     th,
     td {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
         padding: 1rem;
         border-bottom: 1px solid var(--border-color);
     }
@@ -368,7 +371,9 @@ NewsApp Admin Dashboard
         color: var(--text-light);
     }
 
-    .form-input, .form-textarea, .form-select {
+    .form-input,
+    .form-textarea,
+    .form-select {
         width: 100%;
         padding: 1rem;
         background-color: #2d2d2d;
@@ -379,7 +384,9 @@ NewsApp Admin Dashboard
         transition: all 0.3s;
     }
 
-    .form-input:focus, .form-textarea:focus, .form-select:focus {
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
         outline: none;
         border-color: var(--primary);
         box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
@@ -468,7 +475,7 @@ NewsApp Admin Dashboard
         color: white;
         padding: 1rem 1.5rem;
         border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         z-index: 1000;
         display: none;
         align-items: center;
@@ -481,8 +488,15 @@ NewsApp Admin Dashboard
     }
 
     @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
     }
 
     /* Status Badges */
@@ -541,88 +555,88 @@ NewsApp Admin Dashboard
         .main-content {
             padding: 1.5rem;
         }
-        
+
         .stats-grid {
             grid-template-columns: 1fr;
         }
-        
+
         .top-bar {
             flex-direction: column;
             align-items: flex-start;
             gap: 1.5rem;
         }
-        
+
         .user-info {
             align-self: flex-end;
         }
-        
+
         .article-form {
             padding: 1.5rem;
         }
-        
+
         .form-actions {
             flex-direction: column;
         }
-        
+
         .btn {
             width: 100%;
             justify-content: center;
         }
     }
-    </style>
+</style>
 @endSection
 
 @section('main')
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="logo">
-            <i class="fas fa-newspaper"></i>
-            <div>
-                <h1>NewsApp</h1>
-                <span>Admin Dashboard</span>
-            </div>
+<!-- Sidebar -->
+<aside class="sidebar">
+    <div class="logo">
+        <i class="fas fa-newspaper"></i>
+        <div>
+            <h1>NewsApp</h1>
+            <span>Admin Dashboard</span>
         </div>
+    </div>
 
-        <ul class="menu">
-            <div class="menu-section">Main</div>
-            <li><a href="{{ route('dashboard') }}" class="menu-item"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
-            </li>
-            <li><a href="{{ route('add') }}" class="menu-item"><i class="fas fa-edit"></i> <span>Write Article</span></a></li>
-            <li>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="menu-item" style="background: none;
+    <ul class="menu">
+        <div class="menu-section">Main</div>
+        <li><a href="{{ route('dashboard') }}" class="menu-item"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+        </li>
+        <li><a href="{{ route('add') }}" class="menu-item"><i class="fas fa-edit"></i> <span>Write Article</span></a></li>
+        <li>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="menu-item" style="background: none;
                                                 border: none;
                                                 width: 100%;
                                                 text-align: left;
                                                 cursor: pointer;">
-                        <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-                    </button>
-                </form>
-            </li>
-        </ul>
-    </aside>
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </button>
+            </form>
+        </li>
+    </ul>
+</aside>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Top Bar -->
-        <div class="top-bar">
-            <div class="page-title">
-                <h2>Dashboard Overview</h2>
-                <p>Welcome back, Admin! Here's what's happening with your news app today.</p>
-            </div>
-
-            <div class="user-info">
-                <div class="user-avatar">
-                    <i class="fa-solid fa-user-tie"></i>
-                </div>
-                <div>
-                    <div class="user-name">Admin User</div>
-                    <div class="user-role">Administrator</div>
-                </div>
-            </div>
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="page-title">
+            <h2>Dashboard Overview</h2>
+            <p>Welcome back, Admin! Here's what's happening with your news app today.</p>
         </div>
 
-        @yield('dashboardSection')
-    </main>
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <div>
+                <div class="user-name">Admin User</div>
+                <div class="user-role">Administrator</div>
+            </div>
+        </div>
+    </div>
+
+    @yield('dashboardSection')
+</main>
 @endsection

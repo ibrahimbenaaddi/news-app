@@ -394,7 +394,7 @@
             </div>
         </article>
         @endforeach
-        @if($relatedArticles->count() > 10)
+        @if(!$relatedArticles->count() < 10)
         {{$relatedArticles->links()}}
         @endif
 </section>

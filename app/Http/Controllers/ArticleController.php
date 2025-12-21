@@ -9,6 +9,8 @@ use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 use Exception;
 
 class ArticleController extends Controller
@@ -32,6 +34,7 @@ class ArticleController extends Controller
      */
     public function index()
     {
+        Gate::forUser(Auth::guard('admin')->user())->authorize('isAdmin');
         try {
             $articles = $this->service->getAllArticles();
             // the usage of isEmpty() on null give us Error insted use blank() handle null empty array & collection 
@@ -65,6 +68,7 @@ class ArticleController extends Controller
      */
     public function create()
     {
+        Gate::forUser(Auth::guard('admin')->user())->authorize('isAdmin');
         return view('addArticle');
     }
 
@@ -123,6 +127,7 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
+        Gate::forUser(Auth::guard('admin')->user())->authorize('isAdmin');
         return view('editArticle', compact('article'));
     }
 
@@ -131,6 +136,7 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, Article $article)
     {
+        Gate::forUser(Auth::guard('admin')->user())->authorize('isAdmin');
         try {
             $validatedData = $request->validated();
             if ($request->hasFile('image')) {
@@ -150,8 +156,8 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
+        Gate::forUser(Auth::guard('admin')->user())->authorize('isAdmin');
         try {
-
             $this->deleteImage($article);
             if (!$this->service->delete($article)) throw new Exception(self::ERROR['delete']);
             return redirect()->route('dashboard');

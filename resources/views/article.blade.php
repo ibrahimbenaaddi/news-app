@@ -389,6 +389,7 @@
         <article class="related-card">
             <img src="{{ asset('storage/' . ($relatedArticle->image ?? 'ArticlesImages/default.png')) }}">
             <div class="related-card-content">
+                <span class="category-badge">{{ $relatedArticle->category }}</span>
                 <h3>{{ $relatedArticle->title}}</h3>
                 <a href="{{ route('show', $relatedArticle) }}" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
             </div>

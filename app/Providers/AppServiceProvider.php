@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Admin;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Auth\Access\Response;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,5 +29,9 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }
+        // Gate for isAdmin
+        Gate::define('isAdmin', function (Admin $admin) {
+            return $admin?->isAdmin ? Response::allow() : Response::deny('You Are not Allowed to do this Action!!');
+        });
     }
 }

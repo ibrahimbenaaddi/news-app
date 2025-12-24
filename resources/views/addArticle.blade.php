@@ -11,7 +11,7 @@
             <h2>Create New Article</h2>
             <p>Write and publish your story</p>
         </div>
-                @if ($errors->any())
+        @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
                 @foreach ($errors->all() as $error)

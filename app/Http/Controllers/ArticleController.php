@@ -95,16 +95,18 @@ class ArticleController extends Controller
      */
     public function find(Request  $request)
     {
+        // i use valdition of laravel for XSS protection
+        $validation = $request->validate([
+            'title' => "required|string|max:100"
+        ]);
+        
         try {
-            if (empty($request->title)) {
-                return back()->with('error', 'plz enter the Title not string vide , Thank you');
-            }
-            $articles = $this->service->findByTitle($request->title);
+            $articles = $this->service->findByTitle($validation['title']);
             if (blank($articles)) throw new Exception(self::ERROR['index']);
             return view('home', compact('articles'));
         } catch (Exception $err) {
             Log::error('The Error  in ArticleController (find) is :' . $err->getMessage());
-            return view('home', compact('articles'));
+            return back();
         }
     }
     /**

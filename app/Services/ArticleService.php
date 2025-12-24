@@ -28,7 +28,8 @@ class ArticleService
     public function findByTitle(string $title)
     {
         try {
-            return Article::where('title', 'like', '%' . $title . '%')->get();
+            // append title for prevent flash error from controller in view whene you switch between paginte page title send vide and flash an error
+            return Article::where('title', 'like', '%' . $title . '%')->paginate(10)->appends(['title' => $title]);
         } catch (Exception $err) {
             Log::error('The Error in ArticleService (findByTitle) is : ' . $err->getMessage());
             return null;

@@ -240,7 +240,7 @@ NewsApp - Latest Articles
 </a>
 <form action="{{ route('find') }}" method="GET">
     <div class="search-container">
-        <input type="text" class="search-input" name='title' placeholder="Search for news, topics, or authors...">
+        <input type="text" class="search-input" name='title' value="{{ old('title') }}" placeholder="Search for news, topics, or authors...">
         <button class="search-btn" type="submit">
             <i class="fas fa-search"></i> Search
         </button>
@@ -254,10 +254,10 @@ NewsApp - Latest Articles
 <h1>Ops ,No articles Now At this moment Come Back Later , Thank you</h1>
 @else
 
-@if (session('error'))
-<div class="alert alert-danger">
-    {{ session('error') }}
-</div>
+@if($errors->any())
+    <div class="alert alert-danger">
+        {{ $errors->first('title') }}
+    </div>
 @endif
 
 <div class="articles-grid">
@@ -278,8 +278,9 @@ NewsApp - Latest Articles
     @endforeach
 </div>
 
-@if(!$articles->count() < 10) 
-{{ $articles->links()}}
+@if(!$articles->count() < 10)
+<!-- links work with paginate collection !! -->
+{{ $articles->links() }}
 @endif
 
 @endif

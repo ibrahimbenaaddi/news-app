@@ -10,9 +10,9 @@ use Exception;
 class ArticleService
 {
     private const ERROR = [
-        'create' => 'Failed to create Article',   
-        'update' => 'Failed to updating Article',   
-        'delete' => 'Failed to deleting Article',   
+        'create' => 'Failed to create Article',
+        'update' => 'Failed to updating Article',
+        'delete' => 'Failed to deleting Article',
     ];
 
     public function getAllArticles()
@@ -40,21 +40,31 @@ class ArticleService
     {
         try {
             return  Article::where('articleID', "!=", $id)
-                            ->where('category', $category)->paginate(10);
+                ->where('category', $category)->paginate(10);
         } catch (Exception $err) {
             Log::error('The Error in ArticleService (filterByCategory) is : ' . $err->getMessage());
             return null;
         }
     }
 
-    public function store(array $data): bool
+    public function show(int $id)
+    {
+        try {
+            return  Article::find($id);
+        } catch (Exception $err) {
+            Log::error('The Error in ArticleService (show) is : ' . $err->getMessage());
+            return null;
+        }
+    }
+
+    public function store(array $data)
     {
         try {
             DB::beginTransaction();
             $article = Article::create($data);
             if (!$article) throw new Exception(self::ERROR['create']);
             DB::commit();
-            return true;
+            return $article;
         } catch (Exception $err) {
             DB::rollBack();
             Log::error('The Error in ArticleService (store) is : ' . $err->getMessage());
@@ -62,7 +72,7 @@ class ArticleService
         }
     }
 
-    public function update(array $data,Article $article): bool
+    public function update(array $data, Article $article): bool
     {
         try {
             DB::beginTransaction();

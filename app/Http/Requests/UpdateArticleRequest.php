@@ -24,7 +24,7 @@ class UpdateArticleRequest extends FormRequest
         return [
             'title' => 'sometimes|string|min:15|max:100',
             'body' => 'sometimes|string|min:350',
-            'category' => 'sometimes',
+            'category' => 'sometimes|string|in:Technology,Business,Health,Sports,Entertainment,Environment',
             'image' => 'nullable|image|mimes:png,jpeg,jpg|max:10240'
         ];
     }

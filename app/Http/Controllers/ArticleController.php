@@ -160,8 +160,8 @@ class ArticleController extends Controller
     {
         Gate::forUser(Auth::guard('admin')->user())->authorize('isAdmin');
         try {
-            $this->deleteImage($article);
             if (!$this->service->delete($article)) throw new Exception(self::ERROR['delete']);
+            $this->deleteImage($article);
             return redirect()->route('dashboard');
         } catch (Exception $err) {
             Log::error('The Error in ArticleController (update) is : ' . $err->getMessage());

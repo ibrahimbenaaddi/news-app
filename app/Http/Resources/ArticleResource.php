@@ -20,8 +20,7 @@ class ArticleResource extends JsonResource
             'description' => $this->body,
             'category' => $this->category,
             'image' => is_null($this->image) ? asset('storage/ArticlesImages/default.png') : asset('storage/'. $this->image),
-            'date' => $this->created_at->format('d-m-Y')
-
+            'date' => $this->created_at->format('F d, Y')
         ];
     }
 }

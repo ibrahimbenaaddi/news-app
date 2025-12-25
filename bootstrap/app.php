@@ -1,5 +1,7 @@
 <?php
 
+use Laravel\Sanctum\Http\Middleware\CheckAbilities;
+use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
 use App\Http\Middleware\IsAuthenticate;
 use App\Http\Middleware\IsLogged;
 use Illuminate\Foundation\Application;
@@ -17,7 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'isAuth' => IsAuthenticate::class,
-            'isLog' => IsLogged::class
+            'isLog' => IsLogged::class,
+            'abilities' => CheckAbilities::class,
+            'ability' => CheckForAnyAbility::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

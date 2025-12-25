@@ -28,7 +28,7 @@ Route::prefix('admin')->group(function () {
             Route::post('/add/article','store')->name('store');
             Route::get('/edit/articles/{article}', 'edit' )->name('edit');
             Route::patch('/edit/articles/{article}', 'update' )->name('update');
-            Route::delete('/delete/articls/{article}','destroy')->name('delete');
+            Route::delete('/delete/articles/{article}','destroy')->name('delete');
         });
         });
 });

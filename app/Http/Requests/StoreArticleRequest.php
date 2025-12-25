@@ -24,7 +24,7 @@ class StoreArticleRequest extends FormRequest
         return [
             'title' => 'required|string|min:15|max:100',
             'body' => 'required|string|min:350',
-            'category' => 'required',
+            'category' => 'required|string|in:Technology,Business,Health,Sports,Entertainment,Environment',
             'image' => 'nullable|image|mimes:png,jpeg,jpg|max:10240'
         ];
     }

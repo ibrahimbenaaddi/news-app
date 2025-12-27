@@ -25,7 +25,7 @@ class StoreArticleRequest extends FormRequest
             'title' => 'required|string|min:15|max:100',
             'body' => 'required|string|min:350',
             'category' => 'required|string|in:Technology,Business,Health,Sports,Entertainment,Environment',
-            'image' => 'nullable|image|mimes:png,jpeg,jpg|max:10240'
+            'image' => 'nullable|image|mimes:png,jpeg,jpg|max:5012'
         ];
     }
 }

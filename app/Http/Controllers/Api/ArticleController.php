@@ -35,7 +35,7 @@ class ArticleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         try {
             $articles = $this->service->getAllArticles();
@@ -205,7 +205,7 @@ class ArticleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request,int $id)
+    public function destroy(Request $request, int $id)
     {
         Gate::forUser($request->user())->authorize('isAdmin');
         try {

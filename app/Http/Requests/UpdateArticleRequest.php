@@ -25,7 +25,7 @@ class UpdateArticleRequest extends FormRequest
             'title' => 'sometimes|string|min:15|max:100',
             'body' => 'sometimes|string|min:350',
             'category' => 'sometimes|string|in:Technology,Business,Health,Sports,Entertainment,Environment',
-            'image' => 'nullable|image|mimes:png,jpeg,jpg|max:10240'
+            'image' => 'nullable|image|mimes:png,jpeg,jpg|max:5012'
         ];
     }
 }

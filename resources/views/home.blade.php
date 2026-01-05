@@ -255,7 +255,7 @@ NewsApp - Latest Articles
 @else
 
 @if($errors->any())
-    <div class="alert alert-danger">
+    <div class="alert alert-danger errorList">
         {{ $errors->first('title') }}
     </div>
 @endif
@@ -279,7 +279,7 @@ NewsApp - Latest Articles
 </div>
 
 @if(!$articles->count() < 10)
-<!-- links work with paginate collection !! -->
+<!-- links work with paginate collection Only !!-->
 {{ $articles->links() }}
 @endif
 

@@ -251,7 +251,7 @@ body {
             <p>Sign in to your admin account</p>
         </div>
         @if ($errors->any())
-        <div class="alert alert-danger">
+        <div class="alert alert-danger errorList">
             <ul>
                 @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
@@ -260,7 +260,7 @@ body {
         </div>
         @endif
         @if (session('failed'))
-        <div class="alert alert-danger">
+        <div class="alert alert-danger errorList">
             {{ session('failed') }}
         </div>
         @endif

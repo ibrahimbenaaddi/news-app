@@ -5,7 +5,7 @@
 <h1>Ops ,No articles Now At this moment Come Back Later , Thank you</h1>
 @else
 @if (session('error'))
-<div class="alert alert-danger">
+<div class="alert alert-danger errorList">
    {{ session('error') }}
 </div>
 @endif

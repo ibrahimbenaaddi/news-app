@@ -12,7 +12,7 @@
             <p>Write and publish your story</p>
         </div>
         @if ($errors->any())
-        <div class="alert alert-danger">
+        <div class="alert alert-danger errorList">
             <ul>
                 @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
@@ -21,7 +21,7 @@
         </div>
         @endif
         @if (session('error'))
-        <div class="alert alert-danger">
+        <div class="alert alert-danger errorList">
             {{ session('error') }}
         </div>
         @endif

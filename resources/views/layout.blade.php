@@ -29,5 +29,16 @@
         <p>© 2025/2026 NewsApp. All rights reserved. | Stay informed with the latest news from around the world.</p>
     </footer>
 </body>
-
+<script>
+    const errorList = document.querySelector('.errorList');
+    function HideError() {
+        setTimeout(()=>{
+            errorList.remove();
+        },3000);
+    };
+    if(errorList){
+        HideError();
+    }
+    
+</script>
 </html>

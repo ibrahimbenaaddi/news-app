@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AuthJWTController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('articles')->group(function () {
@@ -28,4 +29,22 @@ Route::prefix('admin')->group(function () {
             Route::delete('/delete/articles/{id}', 'destroy')->where('id', '[0-9]+');
         });
     });
+});
+
+// For Auth JwT
+
+Route::prefix('jwt/admin')->group(function () {
+
+    Route::post('/login', [AuthJWTController::class, 'login']);
+
+        Route::middleware('auth:api')->group(function(){
+            Route::post('/logout', [AuthJWTController::class, 'logout']);
+            // for admin
+            // Articles operations
+            Route::controller(ArticleController::class)->group(function () {
+                Route::post('/articles', 'store');
+                Route::patch('/edit/articles/{id}', 'update')->where('id', '[0-9]+');
+                Route::delete('/delete/articles/{id}', 'destroy')->where('id', '[0-9]+');
+            });
+        });    
 });

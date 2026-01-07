@@ -34,10 +34,10 @@ export default function Home() {
     }, [error])
 
     // Links of pagination
-    const linksArr = (number) => {
+    const linksArr = (number,Cpage) => {
         let links = [];
         for (let i = 1; i <= number; i++) {
-            links.push(<li className="page-item border border-black list"><button onClick={() => navigate(`/page/${i}`) } className="page-link text-center link">{i}</button></li>);
+            links.push(<li className={`page-item border border-black list ${Cpage == i ? 'active' : '' }`}><button onClick={() => navigate(`/page/${i}`) } className="page-link text-center link">{i}</button></li>);
         }
         return links;
     }
@@ -104,7 +104,7 @@ export default function Home() {
                                                 <button onClick={()=> backward(Number(currentPage),Number(numberPages))} className="page-link text-center link" >&#8617;</button>
                                             </li>
                                             {
-                                                linksArr(numberPages)
+                                                linksArr(numberPages,currentPage)
                                             }
                                             <li className="page-item border border-black" >
                                                 <button onClick={()=> forward(Number(currentPage),Number(numberPages))} className="page-link text-center link">&#8618;</button>

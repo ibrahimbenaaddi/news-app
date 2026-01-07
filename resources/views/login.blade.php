@@ -297,9 +297,7 @@ body {
                 <span>Sign In</span>
                 <i class="fas fa-sign-in-alt"></i>
             </button>
-
+        </form>
     </div>
-
-    </form>
-</div>
+</div>    
 @endsection

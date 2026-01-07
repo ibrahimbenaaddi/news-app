@@ -10,8 +10,8 @@ export default function App() {
         <Routes>
           <Route element={<PubLayout />}>
               {/* Npage : number page for pagination */}
-              <Route index element={ <Navigate to="/page/1" /> } />
-              <Route path='/page/:currentPage' element={ <Home /> } />
+              {/* <Route index element={ <Navigate to="/page/1" /> } /> */}
+              <Route index element={ <Home /> } />
               <Route path='/Article/:articleID' element={ <Article /> } />
           </Route>
         </Routes>

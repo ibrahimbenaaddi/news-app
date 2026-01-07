@@ -42,4 +42,24 @@ export default class ArticleContorller {
             return false
         }
     }
+
+    async getArticleByTitle(title, page = 1 ) {
+        try {
+            const response = await axios({
+                method: 'get',
+                url: `http://newsapp.op/api/articles/title/${title}?page=${page}`,
+                headers: {
+                    'Content-type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            if (response.data.status) {
+                return response.data
+            }
+            return false
+        } catch (error) {
+            console.error(error.message);
+            return false
+        }
+    }
 }

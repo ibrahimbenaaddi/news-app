@@ -34,8 +34,7 @@ export default function Article() {
     useEffect(() => {
         ArticleService.getArticleById(articleID, currentPage).then(res => {
             if (!res) {
-                setRelatedArticles(null);
-                return;
+                return setRelatedArticles(null);
             }
             setRelatedArticles(res.relatedArticles.articles);
             setCurrentPage(res.relatedArticles.pagination.current_page)
@@ -115,7 +114,7 @@ export default function Article() {
                                                     <h3>{title}</h3>
                                                     <Link to={`/Article/${id}`} className="read-more">Read More <i className="fas fa-arrow-right"></i></Link>
                                                 </div>
-                                            </article>) : ""
+                                            </article>) : "No Articles Related To this Article"
                                     }
                                 </div>
 
@@ -123,7 +122,7 @@ export default function Article() {
                         </>
             }
             {
-                numberPages > 1 ? <div className="d-flex flex-row-reverse mt-2">
+                numberPages > 1 && relatedArticles.length > 0 ? <div className="d-flex flex-row-reverse mt-2">
                 <nav>
                     <ul className="pagination pagination-lg">
                         <li className="page-item border border-black list" >

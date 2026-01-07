@@ -1,23 +1,47 @@
 import Styled from 'Styled-Components'
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Link, useSearchParams} from 'react-router-dom'
 import ArticleController from '../../Articles/ArticleController.js'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
     const ArticleService = new ArticleController();
-    let navigate = useNavigate()
-
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const [articles, setArticles] = useState(null);
     const [errorsupport, setErrorsupport] = useState(null);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [numberPages, setNumberPages] = useState(1)
+    const [numberPages, setNumberPages] = useState(1);
+    const [isSearching, setIsSearching] = useState(false)
+    
+    // find by Title 
+    const [title, setTitle] = useState('');
 
-    const { currentPage } = useParams();
+    const currentPage = Number(searchParams.get("page")) || 1;
 
+    // fetch by title
+    const fetchArticleTitle = (title, page) => {
+        ArticleService.getArticleByTitle(title, page).then(res => {
+            if (!res) {
+                return setErrorsupport('No Article Found pls ContactUs');
+            }
+            if (res.articles.length < 0) {
+                return setErrorsupport(`No Article Found By Title : ${title}`);
+            }
+            setArticles(res.articles);
+            setNumberPages(res.pagination.last_page);
+            setErrorsupport(null);
+        });
+    }
+
+    // for AllArticle
     useEffect(() => {
         document.title = 'NewsApp - Latest Articles';
+        if (isSearching) {
+            fetchArticleTitle(title, currentPage);
+            return window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+
         ArticleService.getArticles(currentPage).then(res => {
             if (!res) {
                 return setErrorsupport('No Article Found pls ContactUs');
@@ -25,52 +49,60 @@ export default function Home() {
             setArticles(res.articles);
             setNumberPages(res.pagination.last_page);
             setIsLoading(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-    }, [currentPage]);
+    }, [isSearching, currentPage]);
+
+    // for FindBytitle 
+    const find = () => {
+        fetchArticleTitle(title, currentPage);
+        setSearchParams({ page: 1 });
+        setIsSearching(true);
+    };
 
     useEffect(() => {
         const timeOut = setTimeout(() => setError(null), 3500);
         return () => clearTimeout(timeOut);
-    }, [error])
+    }, [error]);
 
     // Links of pagination
-    const linksArr = (number,Cpage) => {
+    const linksArr = (number, Cpage) => {
         let links = [];
         for (let i = 1; i <= number; i++) {
-            links.push(<li className={`page-item border border-black list ${Cpage == i ? 'active' : '' }`}><button onClick={() => navigate(`/page/${i}`) } className="page-link text-center link">{i}</button></li>);
+            links.push(<li className={`page-item border border-black list ${Cpage == i ? 'active' : ''}`}><button onClick={() => setSearchParams({ page: i })} className="page-link text-center link">{i}</button></li>);
         }
         return links;
-    }
+    };
 
     // forward and backward
-
-    const forward = (Cpage ,Npage) =>{
-        if(Cpage == Npage ){
-            navigate(`/page/1`);
+    const forward = (Cpage, Npage) => {
+        if (Cpage == Npage) {
+            setSearchParams({ page: 1 });
             return;
         }
-        navigate(`/page/${Cpage+1}`);
-
+        setSearchParams({ page: Cpage + 1 })
     }
-    const backward = (Cpage ,Npage) =>{
-        if(Cpage == 1 ){
-            navigate(`/page/${Npage}`);
+    const backward = (Cpage, Npage) => {
+        if (Cpage == 1) {
+            setSearchParams({ page: Npage })
             return;
         }
-        navigate(`/page/${Cpage-1}`);
-
-    }
+        setSearchParams({ page: Cpage - 1 })
+    };
     return <StyledComponent>
         {/* navbare */}
         <nav className="navbar">
-            <Link to="/" className="logo">
+            <a onClick={() => { 
+                setIsSearching(false) ;
+                setSearchParams({ page: 1 });
+                }} className="logo">
                 <i className="fas fa-newspaper"></i>
                 <h1>NewsApp</h1>
-            </Link>
+            </a>
             <div>
                 <div className="search-container">
-                    <input type="text" className="search-input" name='title' placeholder="Search for news, topics, or authors..." />
-                    <button className="search-btn" type="submit">
+                    <input type="text" className="search-input" name='title' value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Search for news, topics, or authors..." />
+                    <button className="search-btn" onClick={find}>
                         <i className="fas fa-search"></i> Search
                     </button>
                 </div>
@@ -85,7 +117,7 @@ export default function Home() {
                         : isLoading ? <h1>isLoading...</h1>
                             : error ? <h5>{error}</h5> : <>
                                 {
-                                    articles.map(({ title, category, image, date ,id}, index) => <article className="article-card" key={index}>
+                                    articles.map(({ title, category, image, date, id }, index) => <article className="article-card" key={index}>
                                         <img src={image} className="card-image" />
                                         <div className="card-content">
                                             <span className="card-category">{category}</span>
@@ -97,22 +129,23 @@ export default function Home() {
                                         </div>
                                     </article>)
                                 }
-                                <div className="position-absolute bottom-0 end-0">
-                                    <nav>
-                                        <ul className="pagination pagination-lg">
-                                            <li className="page-item border border-black list" >
-                                                <button onClick={()=> backward(Number(currentPage),Number(numberPages))} className="page-link text-center link" >&#8617;</button>
-                                            </li>
-                                            {
-                                                linksArr(numberPages,currentPage)
-                                            }
-                                            <li className="page-item border border-black" >
-                                                <button onClick={()=> forward(Number(currentPage),Number(numberPages))} className="page-link text-center link">&#8618;</button>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
-
+                                {
+                                    numberPages > 1 ? <div className="position-absolute bottom-0 end-0">
+                                        <nav>
+                                            <ul className="pagination pagination-lg">
+                                                <li className="page-item border border-black list" >
+                                                    <button onClick={() => backward(Number(currentPage), Number(numberPages))} className="page-link text-center link" >&#8617;</button>
+                                                </li>
+                                                {
+                                                    linksArr(numberPages, currentPage)
+                                                }
+                                                <li className="page-item border border-black" >
+                                                    <button onClick={() => forward(Number(currentPage), Number(numberPages))} className="page-link text-center link">&#8618;</button>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div> : ''
+                                }
                             </>
                 }
             </div>
@@ -143,7 +176,9 @@ const StyledComponent = Styled.div`
         display: flex;
         align-items: center;
         gap: 12px;
-        text-decoration: none
+        text-decoration: none;
+        cursor : pointer;
+
     }
 
     .logo i {

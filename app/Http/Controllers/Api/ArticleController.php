@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 
 
 class ArticleController extends Controller
@@ -64,13 +65,19 @@ class ArticleController extends Controller
         }
     }
 
-    public function find(Request $request)
+    public function find(string $title)
     {
-        $valdation = $request->validate([
-            'title' => 'required|string|max:100'
-        ]);
         try {
-            $articles = $this->service->findByTitle($valdation['title']);
+            // use Validation of laravel prevent XSS
+            $validator = Validator::make(['title' => $title], [
+                'title' => 'required|string|max:100'
+            ]);
+
+            if ($validator->fails()) {
+                throw new Exception(self::ERROR['index']);
+            };
+
+            $articles = $this->service->findByTitle($title);
             if (blank($articles)) throw new Exception(self::ERROR['index']);
             return response()->json(
                 [
@@ -135,6 +142,14 @@ class ArticleController extends Controller
     public function show(int $id)
     {
         try {
+            $validator = Validator::make(['id' => $id], [
+                'id' => 'required|integer|max:100'
+            ]);
+
+            if ($validator->fails()) {
+                throw new Exception(self::ERROR['index']);
+            };
+
             $article = $this->service->show($id);
             if (blank($article)) throw new Exception(self::ERROR['index']);
             $relatedArticles = $this->service->filterByCategory($article->category, $article->articleID) ?? null;
@@ -173,8 +188,18 @@ class ArticleController extends Controller
     {
         Gate::forUser($request->user())->authorize('isAdmin');
         try {
+
+            $validator = Validator::make(['id' => $id], [
+                'id' => 'required|integer|max:100'
+            ]);
+
+            if ($validator->fails()) {
+                throw new Exception(self::ERROR['index']);
+            }
+
             // first check if the article exists
             $article = $this->service->show($id);
+
             if (blank($article)) throw new Exception(self::ERROR['find']);
             $validationData = $request->validated();
             if ($request->hasFile('image')) {
@@ -208,6 +233,15 @@ class ArticleController extends Controller
     {
         Gate::forUser($request->user())->authorize('isAdmin');
         try {
+            
+            $validator = Validator::make(['id' => $id], [
+                'id' => 'required|integer|max:100'
+            ]);
+
+            if ($validator->fails()) {
+                throw new Exception(self::ERROR['index']);
+            }
+
             // first check if the article exists
             $article = $this->service->show($id);
             if (blank($article)) throw new Exception(self::ERROR['find']);

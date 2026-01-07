@@ -9,7 +9,7 @@ Route::prefix('articles')->group(function () {
 
     Route::controller(ArticleController::class)->group(function () {
         Route::get('/', 'index');
-        Route::get('/title', 'find');
+        Route::get('/title/{title}', 'find');
         Route::get('/{id}', 'show')->where('id', '[0-9]+');
     });
 });

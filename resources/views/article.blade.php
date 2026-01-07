@@ -384,8 +384,8 @@
 <!-- Related Articles -->
 <section class="related-section">
     <h2 class="section-title">Related Articles</h2>
+    <div class="related-articles mb-3">
     @foreach($relatedArticles as $relatedArticle)
-    <div class="related-articles">
         <article class="related-card">
             <img src="{{ asset('storage/' . ($relatedArticle->image ?? 'ArticlesImages/default.png')) }}">
             <div class="related-card-content">
@@ -394,10 +394,11 @@
                 <a href="{{ route('show', $relatedArticle) }}" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
             </div>
         </article>
-        @endforeach
-        @if(!$relatedArticles->count() < 10)
-        {{$relatedArticles->links()}}
-        @endif
+    @endforeach
+    </div>
+    @if(!$relatedArticles->count() < 10)
+    {{$relatedArticles->links()}}
+    @endif
 </section>
 @endunless
 @endsection

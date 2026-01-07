@@ -40,7 +40,7 @@ class ArticleService
     {
         try {
             return  Article::where('articleID', "!=", $id)
-                ->where('category', $category)->paginate(10);
+                ->where('category', $category)->paginate(4);
         } catch (Exception $err) {
             Log::error('The Error in ArticleService (filterByCategory) is : ' . $err->getMessage());
             return null;

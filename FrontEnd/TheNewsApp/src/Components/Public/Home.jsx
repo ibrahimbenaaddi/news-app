@@ -85,14 +85,14 @@ export default function Home() {
                         : isLoading ? <h1>isLoading...</h1>
                             : error ? <h5>{error}</h5> : <>
                                 {
-                                    articles.map(({ title, category, image, date }, index) => <article className="article-card" key={index}>
+                                    articles.map(({ title, category, image, date ,id}, index) => <article className="article-card" key={index}>
                                         <img src={image} className="card-image" />
                                         <div className="card-content">
                                             <span className="card-category">{category}</span>
                                             <h3 className="card-title">{title}</h3>
                                             <div className="card-footer">
                                                 <span className="card-date">{date}</span>
-                                                <a href="{{route('show', $article)}}" className="read-more">Read More <i className="fas fa-arrow-right"></i></a>
+                                                <Link to={`/Article/${id}`} className="read-more">Read More <i className="fas fa-arrow-right"></i></Link>
                                             </div>
                                         </div>
                                     </article>)

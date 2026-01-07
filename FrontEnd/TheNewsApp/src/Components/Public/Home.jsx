@@ -55,6 +55,10 @@ export default function Home() {
 
     // for FindBytitle 
     const find = () => {
+        if(title == '' || title.length < 0 ){
+            setError('Plz enter A Solid Title');
+            return;
+        }
         fetchArticleTitle(title, currentPage);
         setSearchParams({ page: 1 });
         setIsSearching(true);
@@ -110,12 +114,13 @@ export default function Home() {
         </nav>
         {/* mainContent */}
         <main className="container" >
+            { error && <h5 className="alert alert-warning m-3 p-2">{error}</h5>  }
             <div className="articles-grid position-relative">
                 {/* Article Card Template */}
                 {
                     errorsupport ? <h5>{errorsupport}</h5>
                         : isLoading ? <h1>isLoading...</h1>
-                            : error ? <h5>{error}</h5> : <>
+                            : <>
                                 {
                                     articles.map(({ title, category, image, date, id }, index) => <article className="article-card" key={index}>
                                         <img src={image} className="card-image" />

@@ -1,33 +1,65 @@
 import Styled from 'Styled-Components'
-import { Link } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import ArticleController from '../../Articles/ArticleController.js'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
     const ArticleService = new ArticleController();
+    let navigate = useNavigate()
+
 
     const [articles, setArticles] = useState(null);
     const [errorsupport, setErrorsupport] = useState(null);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [numberPages, setNumberPages] = useState(1)
+
+    const { currentPage } = useParams();
 
     useEffect(() => {
         document.title = 'NewsApp - Latest Articles';
-        ArticleService.getArticles().then(res => {
+        ArticleService.getArticles(currentPage).then(res => {
             if (!res) {
-                console.log(res);
                 return setErrorsupport('No Article Found pls ContactUs');
             }
-            setArticles(res)
+            setArticles(res.articles);
+            setNumberPages(res.pagination.last_page);
             setIsLoading(false);
         });
-    }, []);
+    }, [currentPage]);
 
     useEffect(() => {
         const timeOut = setTimeout(() => setError(null), 3500);
         return () => clearTimeout(timeOut);
     }, [error])
 
+    // Links of pagination
+    const linksArr = (number) => {
+        let links = [];
+        for (let i = 1; i <= number; i++) {
+            links.push(<li className="page-item border border-black list"><button onClick={() => navigate(`/page/${i}`) } className="page-link text-center link">{i}</button></li>);
+        }
+        return links;
+    }
+
+    // forward and backward
+
+    const forward = (Cpage ,Npage) =>{
+        if(Cpage == Npage ){
+            navigate(`/page/1`);
+            return;
+        }
+        navigate(`/page/${Cpage+1}`);
+
+    }
+    const backward = (Cpage ,Npage) =>{
+        if(Cpage == 1 ){
+            navigate(`/page/${Npage}`);
+            return;
+        }
+        navigate(`/page/${Cpage-1}`);
+
+    }
     return <StyledComponent>
         {/* navbare */}
         <nav className="navbar">
@@ -53,7 +85,7 @@ export default function Home() {
                         : isLoading ? <h1>isLoading...</h1>
                             : error ? <h5>{error}</h5> : <>
                                 {
-                                    articles.map(({ title, category, image, date }) => <article className="article-card">
+                                    articles.map(({ title, category, image, date }, index) => <article className="article-card" key={index}>
                                         <img src={image} className="card-image" />
                                         <div className="card-content">
                                             <span className="card-category">{category}</span>
@@ -65,20 +97,17 @@ export default function Home() {
                                         </div>
                                     </article>)
                                 }
-                                <div class="position-absolute bottom-0 end-0">
+                                <div className="position-absolute bottom-0 end-0">
                                     <nav>
-                                        <ul class="pagination pagination-lg">
-                                            <li class="page-item border border-black list" >
-                                                <Link to="/" class="page-link text-center link">&#8617;</Link>
+                                        <ul className="pagination pagination-lg">
+                                            <li className="page-item border border-black list" >
+                                                <button onClick={()=> backward(Number(currentPage),Number(numberPages))} className="page-link text-center link" >&#8617;</button>
                                             </li>
-                                            <li class="page-item border border-black" >
-                                                <Link to="/" class="page-link text-center link" text-center>1</Link>
-                                            </li>
-                                            <li class="page-item border border-black" >
-                                                <Link to="/" class="page-link text-center link">2</Link>
-                                            </li>
-                                            <li class="page-item border border-black" >
-                                                <Link to="/" class="page-link text-center link">&#8618;</Link>
+                                            {
+                                                linksArr(numberPages)
+                                            }
+                                            <li className="page-item border border-black" >
+                                                <button onClick={()=> forward(Number(currentPage),Number(numberPages))} className="page-link text-center link">&#8618;</button>
                                             </li>
                                         </ul>
                                     </nav>

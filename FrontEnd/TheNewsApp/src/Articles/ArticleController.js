@@ -23,7 +23,7 @@ export default class ArticleContorller {
 
     }
 
-    async getArticleById(articleID,page = 1) {
+    async getArticleById(articleID, page = 1) {
         try {
             const response = await axios({
                 method: 'get',
@@ -43,7 +43,7 @@ export default class ArticleContorller {
         }
     }
 
-    async getArticleByTitle(title, page = 1 ) {
+    async getArticleByTitle(title, page = 1) {
         try {
             const response = await axios({
                 method: 'get',
@@ -61,5 +61,35 @@ export default class ArticleContorller {
             console.error(error.message);
             return false
         }
+    }
+
+    async updateArticle(articleData, articleID) {
+        articleData.append('_method', 'PATCH');
+        const response = await axios({
+            method: 'post',
+            url: `http://newsapp.op/api/admin/edit/articles/${articleID}`,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            data:articleData
+        }).catch(function (error) {
+            return error.response
+        })
+        return response.data
+    }
+
+    async storeArticle(articleData) {
+        const response = await axios({
+            method: 'post',
+            url: `http://newsapp.op/api/admin/articles`,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            data:articleData
+        }).catch(function (error) {
+            return error.response
+        })
+        console.log(response)
+        return response.data
     }
 }

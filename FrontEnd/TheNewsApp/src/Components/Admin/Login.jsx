@@ -9,6 +9,8 @@ export default function Login() {
     const [loginForm, setLoginForm] = useState({ email: '', password: '' });
     const [error, setError] = useState([]);
 
+    useEffect(()=>{ document.title = 'NewsApp - Login'},[])
+
     // handleInputs
     const handleInputs = (email, pass) => {
         if (!email.trim()) {

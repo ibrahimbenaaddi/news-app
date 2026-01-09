@@ -1,9 +1,28 @@
 import Styled from 'Styled-Components'
-import { Outlet , Link} from 'react-router-dom'
-import { useEffect } from 'react'
+import { Outlet , Link , useNavigate} from 'react-router-dom'
+import { useEffect , useState} from 'react'
+import AuthController from '../../AuthSystem/AuthController.js'
 
 export default function AdLayout() {
+    const [error , setError] = useState(null);
+    const AuthService = new AuthController();
+    const navigate = useNavigate();
     useEffect(() => { document.title = 'NewsApp Admin Dashboard' }, [])
+    useEffect(() => { 
+        error && alert(`Failed To Logout : ${error}`) ;
+        return () => setError(null);
+        }, [error]);
+
+    
+    // logout
+    const logout = async (e) => {
+        e.preventDefault();
+        const response = await AuthService.logout();
+        if(response.status){
+            navigate('/Admin/login');
+        };
+        setError(response.message)
+    }
     return <StyleComponent>
         <aside className="sidebar">
             <div className="logo">
@@ -20,7 +39,7 @@ export default function AdLayout() {
                 </li>
                 <li><Link to="/Admin/Add/Article" className="menu-item"><i className="fas fa-edit"></i> <span>Write Article</span></Link></li>
                 <li>
-                    <form action="{{ route('logout') }}" method="POST">
+                    <form onSubmit={logout}>
                         <button type="submit" className="menu-item" style={{
                             background: 'none',
                             border: 'none',

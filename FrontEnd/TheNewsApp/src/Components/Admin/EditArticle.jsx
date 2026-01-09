@@ -102,7 +102,7 @@ export default function EditArticle() {
                             error.length > 0 && <div className="alert alert-danger errorList mb-2">
                                 <ul style={{ listStyleType: 'none' }}>
                                     {
-                                        error.map((err, index) => <li className="p-2 mb-2" key={index} >{err}</li>)
+                                        error.map((err, index) => <li className="p-2" key={index} >{err}</li>)
                                     }
                                 </ul>
                             </div>

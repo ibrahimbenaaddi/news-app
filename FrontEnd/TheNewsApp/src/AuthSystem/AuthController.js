@@ -17,4 +17,19 @@ export default class AuthController{
         return response.data;
 
     }
+    async logout(){
+        const response = await axios({
+                method : 'post',
+                url : 'http://newsapp.op/api/admin/logout',
+                headers : {
+                    'Content-Type' : 'application/json',
+                    'Accept' : 'application/json'
+                }
+
+        }).catch(function (error){
+            return error.response;
+        });
+        return response.data;
+
+    }
 }

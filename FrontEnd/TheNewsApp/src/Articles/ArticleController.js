@@ -1,4 +1,6 @@
 import axios from 'axios';
+const token = localStorage.getItem('token');
+axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
 export default class ArticleContorller {
     async getArticles(page) {
@@ -71,7 +73,7 @@ export default class ArticleContorller {
             headers: {
                 'Content-Type': 'multipart/form-data'
             },
-            data:articleData
+            data: articleData
         }).catch(function (error) {
             return error.response
         })
@@ -85,11 +87,23 @@ export default class ArticleContorller {
             headers: {
                 'Content-Type': 'multipart/form-data'
             },
-            data:articleData
+            data: articleData
         }).catch(function (error) {
             return error.response
-        })
-        console.log(response)
+        });
+        return response.data
+    }
+
+    async deleteArticle(articleID) {
+        const response = await axios({
+            method: 'delete',
+            url: `http://newsapp.op/api/admin/delete/articles/${articleID}`,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).catch(function (error) {
+            return error.response;
+        });
         return response.data
     }
 }

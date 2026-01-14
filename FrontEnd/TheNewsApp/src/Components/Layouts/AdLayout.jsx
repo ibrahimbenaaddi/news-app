@@ -20,6 +20,7 @@ export default function AdLayout() {
         const response = await AuthService.logout();
         if(response.status){
             navigate('/Admin/login');
+            return;
         };
         setError(response.message)
     }

@@ -8,10 +8,10 @@ export default function EditArticle() {
     const navigate = useNavigate();
     const [error, setError] = useState([]);
 
-    const articleImage = useRef();
-    const articleDescription = useRef();
-    const articleCategory = useRef();
-    const articleTitle = useRef();
+    const articleImage = useRef(null);
+    const articleDescription = useRef(null);
+    const articleCategory = useRef(null);
+    const articleTitle = useRef(null);
 
     useEffect(() => {
         const timeout = setTimeout(() => setError([]), 3500);
@@ -71,10 +71,10 @@ export default function EditArticle() {
 
     }
 
-    return <>    <div class="container">
-        <div class="header">
-            <div class="logo">
-                <i class="fas fa-newspaper"></i>
+    return <>    <div className="container">
+        <div className="header">
+            <div className="logo">
+                <i className="fas fa-newspaper"></i>
                 <h1>NewsApp</h1>
             </div>
             <h2>Create New Article</h2>
@@ -90,17 +90,17 @@ export default function EditArticle() {
             </div>
         }
 
-        <form class="article-form" id="articleForm" encType="multipart/form-data">
+        <form className="article-form" id="articleForm" encType="multipart/form-data">
 
-            <div class="form-group">
-                <label class="form-label" for="articleTitle">Article Title</label>
-                <input type="text" class="form-input" id="articleTitle" ref={articleTitle} placeholder="Enter your article title" />
+            <div className="form-group">
+                <label className="form-label" htmlFor="articleTitle">Article Title</label>
+                <input type="text" className="form-input" id="articleTitle" ref={articleTitle} placeholder="Enter your article title" />
 
             </div>
 
-            <div class="form-group">
-                <label class="form-label" for="articleCategory">Category</label>
-                <select class="form-select" id="articleCategory" ref={articleCategory} >
+            <div className="form-group">
+                <label className="form-label" htmlFor="articleCategory">Category</label>
+                <select className="form-select" id="articleCategory" ref={articleCategory} >
                     <option value="">Select a category</option>
                     <option value="Technology">Technology</option>
                     <option value="Business">Business</option>
@@ -111,33 +111,33 @@ export default function EditArticle() {
                 </select>
             </div>
 
-            <div class="form-group">
-                <label class="form-label" for="articleBody">Article Content</label>
-                <textarea class="form-textarea" ref={articleDescription} id="articleBody" placeholder="Write your article content here..." ></textarea>
+            <div className="form-group">
+                <label className="form-label" htmlFor="articleBody">Article Content</label>
+                <textarea className="form-textarea" ref={articleDescription} id="articleBody" placeholder="Write your article content here..." ></textarea>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Featured Image</label>
-                <div class="image-upload" id="imageUpload">
-                    <div class="upload-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
+            <div className="form-group" onClick={() => articleImage.current.click()}>
+                <label className="form-label" htmlFor='imageFile' >Featured Image</label>
+                <div className="image-upload" id="imageUpload">
+                    <div className="upload-icon">
+                        <i className="fas fa-cloud-upload-alt"></i>
                     </div>
-                    <div class="upload-text">
+                    <div className="upload-text">
                         Click to upload or drag and drop
                     </div>
-                    <div class="upload-hint">
+                    <div className="upload-hint">
                         JPG, PNG or GIF
                     </div>
-                    <input type="file" id="imageFile" accept=".png,.jpeg,.jpg" ref={articleImage} />
+                    <input type="file" id="imageFile"  accept=".png,.jpeg,.jpg" ref={articleImage} style={{display : 'none'}}/>
                 </div>
             </div>
 
-            <div class="form-actions">
-                <Link to="/Admin/Dashboard" class="btn btn-secondary" id="cancelBtn">
-                    <i class="fas fa-times"></i> Cancel
+            <div className="form-actions">
+                <Link to="/Admin/Dashboard" className="btn btn-secondary" id="cancelBtn">
+                    <i className="fas fa-times"></i> Cancel
                 </Link>
-                <button type="submit" class="btn btn-primary" id="publishBtn" onClick={storeArticle}>
-                    <i class="fas fa-paper-plane"></i> Publish Article
+                <button type="submit" className="btn btn-primary" id="publishBtn" onClick={storeArticle}>
+                    <i className="fas fa-paper-plane"></i> Publish Article
                 </button>
             </div>
         </form>

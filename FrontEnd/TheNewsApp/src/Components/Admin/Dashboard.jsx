@@ -16,7 +16,7 @@ export default function Dashboard() {
     const currentPage = Number(searchParams.get("page")) || 1;
 
     // fetchAllArticles
-    useEffect(() => {
+    const fetchAllArticles = async () => {
         ArticleService.getArticles(currentPage).then(res => {
             if (!res) {
                 return setErrorsupport('No Article Found pls ContactUs');
@@ -27,6 +27,9 @@ export default function Dashboard() {
             setIsLoading(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
+    }
+    useEffect(() => {
+        fetchAllArticles()
     }, [currentPage]);
 
     // Links of pagination
@@ -53,6 +56,19 @@ export default function Dashboard() {
         }
         setSearchParams({ page: Cpage - 1 })
     };
+
+    const deleteArticle = async (id) => {
+        const resultat = window.confirm('are you sure you delete this article')
+        if (resultat) {
+            const response = await ArticleService.deleteArticle(id);
+            if (response.status) {
+                alert(`The article ID : ${id} , deleted successfully`);
+                fetchAllArticles();
+                return;
+            }
+            alert(response.message);
+        }
+    }
     return <>
         {
             errorsupport ? <h5>{errorsupport}</h5>
@@ -96,9 +112,9 @@ export default function Dashboard() {
                                                 <td>{date}</td>
                                                 <td>
                                                     <div className="action-btns">
-                                                        <Link  to={ `/Admin/Edit/Article/${id}`} className="action-btn edit btn btn-primary"><i className="fas fa-edit"></i></Link>
+                                                        <Link to={`/Admin/Edit/Article/${id}`} className="action-btn edit btn btn-primary"><i className="fas fa-edit"></i></Link>
                                                         <div>
-                                                            <button type="submit" className="action-btn delete btn btn-danger" onClick={() => { return confirm('are you sure you delete this article') }} ><i className="fas fa-trash"></i></button>
+                                                            <button type="submit" className="action-btn delete btn btn-danger" onClick={() => deleteArticle(id)} ><i className="fas fa-trash"></i></button>
                                                         </div>
                                                     </div>
                                                 </td>

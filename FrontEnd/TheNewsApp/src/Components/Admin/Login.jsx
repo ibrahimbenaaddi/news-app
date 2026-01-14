@@ -37,7 +37,6 @@ export default function Login() {
         if (handleInputs(loginForm.email, loginForm.password)) {
             const response = await AuthService.login(loginForm);
             if (response.status) {
-                console.log(response,200)
                 navigate('/Admin/Dashboard');
                 return;
             }

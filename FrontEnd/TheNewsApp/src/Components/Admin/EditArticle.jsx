@@ -10,10 +10,10 @@ export default function EditArticle() {
     const [errorsupport, setErrorsupport] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const articleImage = useRef();
-    const articleDescription = useRef();
-    const articleCategory = useRef();
-    const articleTitle = useRef();
+    const articleImage = useRef(null);
+    const articleDescription = useRef(null);
+    const articleCategory = useRef(null);
+    const articleTitle = useRef(null);
 
     const { articleID } = useParams()
 
@@ -132,8 +132,8 @@ export default function EditArticle() {
                                 <textarea className="form-textarea" id="articleBody" name="description" placeholder="Write your article content here..." defaultValue={description} ref={articleDescription}></textarea>
                             </div>
 
-                            <div className="form-group">
-                                <label className="form-label">Featured Image</label>
+                            <div className="form-group" onClick={() => {articleImage.current.click()}}>
+                                <label className="form-label" htmlFor="imageFile" >Featured Image</label>
                                 <div className="image-upload" id="imageUpload">
                                     <div className="upload-icon">
                                         <i className="fas fa-cloud-upload-alt"></i>
@@ -144,7 +144,7 @@ export default function EditArticle() {
                                     <div className="upload-hint">
                                         JPG, PNG or GIF
                                     </div>
-                                    <input type="file" id="imageFile" accept=".png,.jpeg,.jpg" ref={articleImage} />
+                                    <input type="file" id="imageFile" accept=".png,.jpeg,.jpg" ref={articleImage} style={{display : 'none'}}/>
                                 </div>
                             </div>
 

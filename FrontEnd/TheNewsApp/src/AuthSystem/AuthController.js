@@ -16,6 +16,8 @@ export default class AuthController {
         });
         if (response.data.status) {
             localStorage.setItem('token', response.data.token);
+            localStorage.setItem("Authentication", JSON.stringify(true));
+
         }
         return response.data;
 
@@ -36,6 +38,7 @@ export default class AuthController {
         });
         if (response.data.status) {
             localStorage.removeItem('token');
+            localStorage.removeItem('Authentication');
         }
         return response.data;
 

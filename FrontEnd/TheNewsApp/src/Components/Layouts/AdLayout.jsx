@@ -1,24 +1,27 @@
 import Styled from 'Styled-Components'
-import { Outlet , Link , useNavigate} from 'react-router-dom'
-import { useEffect , useState} from 'react'
+import { Outlet, Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState, useContext } from 'react'
 import AuthController from '../../AuthSystem/AuthController.js'
+import { AuthContext } from '../../AuthSystem/AuthContext.jsx' 
 
 export default function AdLayout() {
-    const [error , setError] = useState(null);
+    const { setAuth } = useContext(AuthContext);
+    const [error, setError] = useState(null);
     const AuthService = new AuthController();
     const navigate = useNavigate();
     useEffect(() => { document.title = 'NewsApp Admin Dashboard' }, [])
-    useEffect(() => { 
-        error && alert(`Failed To Logout : ${error}`) ;
+    useEffect(() => {
+        error && alert(`Failed To Logout : ${error}`);
         return () => setError(null);
-        }, [error]);
+    }, [error]);
 
-    
+
     // logout
     const logout = async (e) => {
         e.preventDefault();
         const response = await AuthService.logout();
-        if(response.status){
+        if (response.status) {
+            setAuth(false)
             navigate('/Admin/login');
             return;
         };

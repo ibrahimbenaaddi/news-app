@@ -1,7 +1,9 @@
 import Styled from 'Styled-Components'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext} from 'react'
 import { useNavigate } from 'react-router-dom'
 import AuthController from '../../AuthSystem/AuthController.js'
+import { AuthContext } from '../../AuthSystem/AuthContext.jsx' 
+
 export default function Login() {
 
     const AuthService = new AuthController();
@@ -9,7 +11,9 @@ export default function Login() {
     const [loginForm, setLoginForm] = useState({ email: '', password: '' });
     const [error, setError] = useState([]);
 
-    useEffect(()=>{ document.title = 'NewsApp - Login'},[])
+    const { setAuth } = useContext(AuthContext);
+
+    useEffect(() => { document.title = 'NewsApp - Login' }, [])
 
     // handleInputs
     const handleInputs = (email, pass) => {
@@ -37,6 +41,7 @@ export default function Login() {
         if (handleInputs(loginForm.email, loginForm.password)) {
             const response = await AuthService.login(loginForm);
             if (response.status) {
+                setAuth(true);
                 navigate('/Admin/Dashboard');
                 return;
             }

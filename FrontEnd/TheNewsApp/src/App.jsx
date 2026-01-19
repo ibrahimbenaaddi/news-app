@@ -4,7 +4,6 @@ import AdLayout from './Components/Layouts/AdLayout.jsx'
 import Home from './Components/Public/Home.jsx'
 import Article from './Components/Public/Article.jsx'
 import NotFound from './Components/Public/NotFound.jsx'
-import Login from './Components/Admin/Login.jsx'
 import Dashboard from './Components/Admin/Dashboard.jsx'
 import EditArticle from './Components/Admin/EditArticle.jsx'
 import StoreArticle from './Components/Admin/StoreArticle.jsx'
@@ -20,10 +19,8 @@ export default function App() {
         </Route>
         
         {/* forAdmin */}
-        <Route  element={ <LoginProtected /> }>
-          <Route path="/Admin/login" element={<Login />} />
-        </Route>
-        
+        <Route path="/Admin/login" element={<LoginProtected />} />
+
         {/* Admin Panel */}
         <Route element={<RouteProtected />} >
           <Route element={<AdLayout />} >

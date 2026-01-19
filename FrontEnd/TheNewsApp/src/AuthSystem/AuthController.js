@@ -60,6 +60,10 @@ export default class AuthController {
             }
 
         }).catch(function (error) {
+            if (error.response.status === 401 || error.response.status === 419) {
+                window.location.reload();
+                return;
+            }
             return error.response;
         });
         if (response.data.status) {

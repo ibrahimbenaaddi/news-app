@@ -102,8 +102,9 @@ export default class ArticleContorller {
             },
             data: articleData
         }).catch(function (error) {
-            if (error.response.status === 401) {
+            if (error.response.status === 401 || error.response.status === 419) {
                 window.location.reload();
+                return;
             }
             return error.response
         })
@@ -119,8 +120,9 @@ export default class ArticleContorller {
             },
             data: articleData
         }).catch(function (error) {
-            if (error.response.status === 401) {
+            if (error.response.status === 401 || error.response.status === 419) {
                 window.location.reload();
+                return;
             }
             return error.response
         });
@@ -135,8 +137,9 @@ export default class ArticleContorller {
                 'Content-Type': 'multipart/form-data'
             }
         }).catch(function (error) {
-            if (error.response.status === 401) {
+            if (error.response.status === 401 || error.response.status === 419) {
                 window.location.reload();
+                return;
             }
             return error.response;
         });

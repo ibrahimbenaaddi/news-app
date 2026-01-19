@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useState, useEffect } from 'react';
+import Login from '../Components/Admin/Login.jsx'
 import axios from 'axios'
 axios.defaults.withCredentials = true;
 
@@ -26,6 +27,6 @@ export default function RouteProtected() {
     if(isLoading){
         return <h1>isLoading...</h1>
     }
-    return auth ? <Navigate to='/Admin/Dashboard' /> : <Outlet /> 
+    return auth ? <Navigate to='/Admin/Dashboard' /> : <Login />
 
 }

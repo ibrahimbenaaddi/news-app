@@ -1,4 +1,3 @@
-import Styled from 'Styled-Components'
 import ArticleController from '../../Articles/ArticleController.js'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'

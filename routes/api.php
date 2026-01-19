@@ -18,8 +18,10 @@ Route::prefix('admin')->group(function () {
 
     Route::post('/login', [AuthController::class, 'login']);
 
-    Route::middleware(['auth:sanctum', 'ability:isAdmin'])->group(function () {
-
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/amIAuth',function () {
+            return response()->json(['status' => true ],200);
+        });
         Route::post('/logout', [AuthController::class, 'logout']);
         // for admin
         // Articles operations

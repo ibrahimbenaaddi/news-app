@@ -1,8 +1,7 @@
 import Styled from 'Styled-Components'
-import { useState, useEffect, useContext} from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AuthController from '../../AuthSystem/AuthController.js'
-import { AuthContext } from '../../AuthSystem/AuthContext.jsx' 
 
 export default function Login() {
 
@@ -10,8 +9,6 @@ export default function Login() {
     const navigate = useNavigate();
     const [loginForm, setLoginForm] = useState({ email: '', password: '' });
     const [error, setError] = useState([]);
-
-    const { setAuth } = useContext(AuthContext);
 
     useEffect(() => { document.title = 'NewsApp - Login' }, [])
 
@@ -41,7 +38,6 @@ export default function Login() {
         if (handleInputs(loginForm.email, loginForm.password)) {
             const response = await AuthService.login(loginForm);
             if (response.status) {
-                setAuth(true);
                 navigate('/Admin/Dashboard');
                 return;
             }

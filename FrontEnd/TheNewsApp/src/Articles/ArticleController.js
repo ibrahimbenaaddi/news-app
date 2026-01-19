@@ -1,13 +1,43 @@
 import axios from 'axios';
-const token = localStorage.getItem('token');
-axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+axios.defaults.withCredentials = true;
+
+function getCoockies() {
+    let csrfToken;
+    let cookies = document.cookie;
+    let arrCookies = cookies.split(';');
+    arrCookies.forEach(element => {
+        if (element.includes('XSRF-TOKEN')) {
+            csrfToken = element.split('=')[1];
+        }
+    })
+    if (csrfToken) {
+        return { find: true, xsrf: csrfToken }
+    }
+    return { find: false, xcsrf: null }
+}
+
+axios.interceptors.request.use(async (req) => {
+
+    if (req.method === "get") {
+        return req;
+    }
+    let { find, xcsrf } = getCoockies();
+    if (!find) {
+        await axios.get("/backend/sanctum/csrf-cookie", { withCredentials: true });
+        xcsrf = getCoockies().xcsrf
+    }
+    req.headers["X-XSRF-TOKEN"] = xcsrf;
+    return req;
+});
+
+
 
 export default class ArticleContorller {
     async getArticles(page) {
         try {
             const response = await axios({
                 method: 'get',
-                url: `http://newsapp.op/api/articles?page=${page}`,
+                url: `/backend/api/articles?page=${page}`,
                 headers: {
                     'Content-type': 'application/json',
                     'Accept': 'application/json'
@@ -17,8 +47,7 @@ export default class ArticleContorller {
                 return response.data
             }
             return false
-        } catch (error) {
-            console.error(error.message);
+        } catch {
             return false
         }
 
@@ -29,7 +58,7 @@ export default class ArticleContorller {
         try {
             const response = await axios({
                 method: 'get',
-                url: `http://newsapp.op/api/articles/${articleID}?page=${page}`,
+                url: `/backend/api/articles/${articleID}?page=${page}`,
                 headers: {
                     'Content-type': 'application/json',
                     'Accept': 'application/json'
@@ -39,8 +68,7 @@ export default class ArticleContorller {
                 return response.data
             }
             return false
-        } catch (error) {
-            console.error(error.message);
+        } catch {
             return false
         }
     }
@@ -49,7 +77,7 @@ export default class ArticleContorller {
         try {
             const response = await axios({
                 method: 'get',
-                url: `http://newsapp.op/api/articles/title/${title}?page=${page}`,
+                url: `/backend/api/articles/title/${title}?page=${page}`,
                 headers: {
                     'Content-type': 'application/json',
                     'Accept': 'application/json'
@@ -59,8 +87,7 @@ export default class ArticleContorller {
                 return response.data
             }
             return false
-        } catch (error) {
-            console.error(error.message);
+        } catch {
             return false
         }
     }
@@ -69,12 +96,15 @@ export default class ArticleContorller {
         articleData.append('_method', 'PATCH');
         const response = await axios({
             method: 'post',
-            url: `http://newsapp.op/api/admin/edit/articles/${articleID}`,
+            url: `/backend/api/admin/edit/articles/${articleID}`,
             headers: {
                 'Content-Type': 'multipart/form-data'
             },
             data: articleData
         }).catch(function (error) {
+            if (error.response.status === 401) {
+                window.location.reload();
+            }
             return error.response
         })
         return response.data
@@ -83,12 +113,15 @@ export default class ArticleContorller {
     async storeArticle(articleData) {
         const response = await axios({
             method: 'post',
-            url: `http://newsapp.op/api/admin/articles`,
+            url: `/backend/api/admin/articles`,
             headers: {
                 'Content-Type': 'multipart/form-data'
             },
             data: articleData
         }).catch(function (error) {
+            if (error.response.status === 401) {
+                window.location.reload();
+            }
             return error.response
         });
         return response.data
@@ -97,11 +130,14 @@ export default class ArticleContorller {
     async deleteArticle(articleID) {
         const response = await axios({
             method: 'delete',
-            url: `http://newsapp.op/api/admin/delete/articles/${articleID}`,
+            url: `/backend/api/admin/delete/articles/${articleID}`,
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         }).catch(function (error) {
+            if (error.response.status === 401) {
+                window.location.reload();
+            }
             return error.response;
         });
         return response.data

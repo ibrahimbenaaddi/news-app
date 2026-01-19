@@ -24,16 +24,16 @@ class AuthController extends Controller
                         'status' => false,
                         'message' => $this->ERROR,
                     ],
-                    500
+                    401
                 );
             }
 
-            $token = Auth::guard('admin')->user()->createToken('api', ['isAdmin'], now()->plus(hours: 8))->plainTextToken;
+            $request->session()->regenerate();
+
             return response()->json(
                 [
                     'status' => true,
                     'admin'  => new AdminResource(Auth::guard('admin')->user()),
-                    'token' => $token
                 ],
                 200
             );
@@ -52,7 +52,11 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try {
-            $request->user()->tokens()->delete();
+            
+            Auth::guard('admin')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            
             return response()->json(
                 [
                     'status' => true,

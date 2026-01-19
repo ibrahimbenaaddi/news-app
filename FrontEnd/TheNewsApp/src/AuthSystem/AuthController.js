@@ -1,10 +1,40 @@
 import axios from 'axios';
+axios.defaults.withCredentials = true;
+
+function getCoockies() {
+    let csrfToken;
+    let cookies = document.cookie;
+    let arrCookies = cookies.split(';');
+    arrCookies.forEach(element => {
+        if (element.includes('XSRF-TOKEN')) {
+            csrfToken = element.split('=')[1];
+        }
+    })
+    if (csrfToken) {
+        return { find: true, xsrf: csrfToken }
+    }
+    return { find: false, xcsrf: null }
+}
+
+axios.interceptors.request.use(async (req) => {
+    if (req.method === "get") {
+        return req;
+    }
+    let { find, xcsrf } = getCoockies();
+    if (!find) {
+        await axios.get("/backend/sanctum/csrf-cookie", { withCredentials: true });
+        xcsrf = getCoockies().xcsrf
+    }
+    req.headers["X-XSRF-TOKEN"] = xcsrf;
+    return req;
+});
 
 export default class AuthController {
+
     async login(data) {
         const response = await axios({
             method: 'post',
-            url: 'http://newsapp.op/api/admin/login',
+            url: '/backend/api/admin/login',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
@@ -15,30 +45,25 @@ export default class AuthController {
             return error.response;
         });
         if (response.data.status) {
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem("Authentication", JSON.stringify(true));
-
+            localStorage.setItem('admin', JSON.stringify(response.data.admin));
         }
         return response.data;
 
     }
     async logout() {
-        const token = localStorage.getItem('token');
         const response = await axios({
             method: 'post',
-            url: 'http://newsapp.op/api/admin/logout',
+            url: '/backend/api/admin/logout',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': `Bearer ${token}`
             }
 
         }).catch(function (error) {
             return error.response;
         });
         if (response.data.status) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('Authentication');
+            localStorage.removeItem('admin');
         }
         return response.data;
 

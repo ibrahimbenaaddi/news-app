@@ -25,7 +25,7 @@ class AuthJWTController extends Controller
                         'status' => false,
                         'message' => $this->ERROR
                     ],
-                    500
+                    401
                 );
             }
 
@@ -33,10 +33,9 @@ class AuthJWTController extends Controller
                 [
                     'status' => true,
                     'admin'  => new AdminResource(Auth::guard('api')->user()),
-                    'token' => $token
                 ],
                 200
-            );
+            )->cookie('token',$token);
             
         } catch (Exception $err) {
             Log::error('The Error in AuthController(login) in api : ' . $err->getMessage());
@@ -53,7 +52,7 @@ class AuthJWTController extends Controller
     public function logout()
     {
         try {
-            auth()->invalidate();
+            auth()->logout();
             return response()->json(
                 [
                     'status' => true,

@@ -19,9 +19,11 @@ Route::prefix('admin')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 
     Route::middleware('auth:sanctum')->group(function () {
+        
         Route::get('/amIAuth',function () {
             return response()->json(['status' => true ],200);
         });
+
         Route::post('/logout', [AuthController::class, 'logout']);
         // for admin
         // Articles operations
@@ -40,6 +42,11 @@ Route::prefix('jwt/admin')->group(function () {
     Route::post('/login', [AuthJWTController::class, 'login']);
 
         Route::middleware('auth:api')->group(function(){
+            
+            Route::get('/amIAuth',function () {
+                return response()->json(['status' => true ],200);
+            });
+
             Route::post('/logout', [AuthJWTController::class, 'logout']);
             // for admin
             // Articles operations

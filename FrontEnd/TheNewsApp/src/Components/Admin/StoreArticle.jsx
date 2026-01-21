@@ -19,13 +19,17 @@ export default function EditArticle() {
     }, [error]);
 
     // handleInputs
-    const handleInputs = (title, description) => {
+    const handleInputs = (title, description ,category) => {
         if (title.trim().length <= 14 || title.trim().length >= 99) {
             setError(prev => [...prev, 'title is must be in range 15~100 char']);
             return false;
         }
         if (description.trim().length <= 349) {
             setError(prev => [...prev, 'description must be greater Than 350 char']);
+            return false;
+        }
+        if (!category.trim()) {
+            setError(prev => [...prev, 'category is required']);
             return false;
         }
         return true;
@@ -57,7 +61,7 @@ export default function EditArticle() {
 
     const storeArticle = async (e) => {
         e.preventDefault()
-        if (!handleInputs(articleTitle.current.value, articleDescription.current.value)) {
+        if (!handleInputs(articleTitle.current.value, articleDescription.current.value, articleCategory.current.value)) {
             setError(prev => [...prev, 'Faild to Store The Article']);
             return;
         }

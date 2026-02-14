@@ -1,38 +1,9 @@
-import axios from 'axios';
-axios.defaults.withCredentials = true;
-// for Sanctum
-// function getCoockies() {
-//     let csrfToken;
-//     let cookies = document.cookie;
-//     let arrCookies = cookies.split(';');
-//     arrCookies.forEach(element => {
-//         if (element.includes('XSRF-TOKEN')) {
-//             csrfToken = element.split('=')[1];
-//         }
-//     })
-//     if (csrfToken) {
-//         return { find: true, xsrf: csrfToken }
-//     }
-//     return { find: false, xcsrf: null }
-// }
-
-// axios.interceptors.request.use(async (req) => {
-//     if (req.method === "get") {
-//         return req;
-//     }
-//     let { find, xcsrf } = getCoockies();
-//     if (!find) {
-//         await axios.get("/backend/sanctum/csrf-cookie", { withCredentials: true });
-//         xcsrf = getCoockies().xcsrf
-//     }
-//     req.headers["X-XSRF-TOKEN"] = xcsrf;
-//     return req;
-// });
+import api from './api.js'
 
 export default class AuthController {
 
     async login(data) {
-        const response = await axios({
+        const response = await api({
             method: 'post',
             // url: '/backend/api/admin/login', // for sanctum
             url: '/backend/api/jwt/admin/login', // for JWT
@@ -52,7 +23,7 @@ export default class AuthController {
 
     }
     async logout() {
-        const response = await axios({
+        const response = await api({
             method: 'post',
             // url: '/backend/api/admin/logout', // fro sanctum
             url: '/backend/api/jwt/admin/logout', // for JWT
@@ -62,12 +33,14 @@ export default class AuthController {
             }
 
         }).catch(function (error) {
-            if (error.response.status === 401 || error.response.status === 419) {
-                window.location.reload();
-                return;
-            }
-            return error.response;
+            // for Sanctum
+            // if (error.response.status === 401 || error.response.status === 419) {
+            //     window.location.reload();
+            //     return;
+            // }
+            return error.response 
         });
+
         if (response.data.status) {
             localStorage.removeItem('admin');
         }

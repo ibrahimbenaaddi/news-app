@@ -1,15 +1,14 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useState, useEffect } from 'react';
 import Login from '../Components/Admin/Login.jsx'
-import axios from 'axios'
-axios.defaults.withCredentials = true;
+import api from './api.js'
 
 export default function RouteProtected() {
     const [auth, setAuth] = useState(false);
     const [ isLoading , setIsLoading ] = useState(true);
 
     const checkIfAuth = async () => {
-        axios({
+        api({
             // url: '/backend/api/admin/amIAuth', // for Sanctum
             url: '/backend/api/jwt/admin/amIAuth', // for JWT
             method: 'get',

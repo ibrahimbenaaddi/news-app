@@ -1,39 +1,9 @@
-import axios from 'axios';
-axios.defaults.withCredentials = true;
-// for Sanctum
-// function getCoockies() {
-//     let csrfToken;
-//     let cookies = document.cookie;
-//     let arrCookies = cookies.split(';');
-//     arrCookies.forEach(element => {
-//         if (element.includes('XSRF-TOKEN')) {
-//             csrfToken = element.split('=')[1];
-//         }
-//     })
-//     if (csrfToken) {
-//         return { find: true, xsrf: csrfToken }
-//     }
-//     return { find: false, xcsrf: null }
-// }
-
-// axios.interceptors.request.use(async (req) => {
-
-//     if (req.method === "get") {
-//         return req;
-//     }
-//     let { find, xcsrf } = getCoockies();
-//     if (!find) {
-//         await axios.get("/backend/sanctum/csrf-cookie", { withCredentials: true });
-//         xcsrf = getCoockies().xcsrf
-//     }
-//     req.headers["X-XSRF-TOKEN"] = xcsrf;
-//     return req;
-// });
+import api from '../AuthSystem/api.js'
 
 export default class ArticleContorller {
     async getArticles(page) {
         try {
-            const response = await axios({
+            const response = await api({
                 method: 'get',
                 url: `/backend/api/articles?page=${page}`,
                 headers: {
@@ -54,7 +24,7 @@ export default class ArticleContorller {
 
     async getArticleById(articleID, page = 1) {
         try {
-            const response = await axios({
+            const response = await api({
                 method: 'get',
                 url: `/backend/api/articles/${articleID}?page=${page}`,
                 headers: {
@@ -73,7 +43,7 @@ export default class ArticleContorller {
 
     async getArticleByTitle(title, page = 1) {
         try {
-            const response = await axios({
+            const response = await api({
                 method: 'get',
                 url: `/backend/api/articles/title/${title}?page=${page}`,
                 headers: {
@@ -92,7 +62,7 @@ export default class ArticleContorller {
 
     async updateArticle(articleData, articleID) {
         articleData.append('_method', 'PATCH');
-        const response = await axios({
+        const response = await api({
             method: 'post',
             // url: `/backend/api/admin/edit/articles/${articleID}`, // for Sanctum
             url: `/backend/api/jwt/admin/edit/articles/${articleID}`, // for JWT
@@ -101,17 +71,18 @@ export default class ArticleContorller {
             },
             data: articleData
         }).catch(function (error) {
-            if (error.response.status === 401 || error.response.status === 419) {
-                window.location.reload();
-                return;
-            }
+            // for sanctum
+            // if (error.response.status === 401 || error.response.status === 419) {
+            //     window.location.reload();
+            //     return;
+            // }
             return error.response
         })
         return response.data
     }
 
     async storeArticle(articleData) {
-        const response = await axios({
+        const response = await api({
             method: 'post',
             // url: `/backend/api/admin/articles`, // for Sanctum
             url: `/backend/api/jwt/admin/articles`, // fro JWT
@@ -120,17 +91,18 @@ export default class ArticleContorller {
             },
             data: articleData
         }).catch(function (error) {
-            if (error.response.status === 401 || error.response.status === 419) {
-                window.location.reload();
-                return;
-            }
+            // for Sanctum
+            // if (error.response.status === 401 || error.response.status === 419) {
+            //     window.location.reload();
+            //     return;
+            // }
             return error.response
         });
         return response.data
     }
 
     async deleteArticle(articleID) {
-        const response = await axios({
+        const response = await api({
             method: 'delete',
             // url: `/backend/api/admin/delete/articles/${articleID}`, // for Sanctum
             url: `/backend/api/jwt/admin/delete/articles/${articleID}`, // for JWT
@@ -138,10 +110,11 @@ export default class ArticleContorller {
                 'Content-Type': 'multipart/form-data'
             }
         }).catch(function (error) {
-            if (error.response.status === 401 || error.response.status === 419) {
-                window.location.reload();
-                return;
-            }
+            // for Sanctum
+            // if (error.response.status === 401 || error.response.status === 419) {
+            //     window.location.reload();
+            //     return;
+            // }
             return error.response;
         });
         return response.data

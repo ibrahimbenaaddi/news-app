@@ -4,6 +4,7 @@ use Laravel\Sanctum\Http\Middleware\CheckAbilities;
 use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
 use App\Http\Middleware\IsAuthenticate;
 use App\Http\Middleware\IsLogged;
+use App\Http\Middleware\CheckTokenJWT;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->statefulApi(); // FOR SANCTUM
         $middleware->alias([
+            'CheckTokenJWT' => CheckTokenJWT::class, // checkToken jwt refreshToken
             'isAuth' => IsAuthenticate::class,
             'isLog' => IsLogged::class,
             'abilities' => CheckAbilities::class,

@@ -19,9 +19,9 @@ Route::prefix('admin')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 
     Route::middleware('auth:sanctum')->group(function () {
-        
-        Route::get('/amIAuth',function () {
-            return response()->json(['status' => true ],200);
+
+        Route::get('/amIAuth', function () {
+            return response()->json(['status' => true], 200);
         });
 
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -40,20 +40,22 @@ Route::prefix('admin')->group(function () {
 Route::prefix('jwt/admin')->group(function () {
 
     Route::post('/login', [AuthJWTController::class, 'login']);
-
-        Route::middleware('auth:api')->group(function(){
-            
-            Route::get('/amIAuth',function () {
-                return response()->json(['status' => true ],200);
-            });
-
-            Route::post('/logout', [AuthJWTController::class, 'logout']);
-            // for admin
-            // Articles operations
-            Route::controller(ArticleController::class)->group(function () {
-                Route::post('/articles', 'store');
-                Route::patch('/edit/articles/{id}', 'update')->where('id', '[0-9]+');
-                Route::delete('/delete/articles/{id}', 'destroy')->where('id', '[0-9]+');
-            });
-        });    
+    // check Refresh Token and send it 
+    Route::middleware('CheckTokenJWT')->group(function () {
+        Route::get('/amIAuth', function () {
+            return response()->json(['status' => true], 200);
+        });
+        Route::get('/refreshToken', [AuthJWTController::class, 'refreshToken']);
+    });
+    
+    Route::middleware('auth:api')->group(function () {
+        Route::post('/logout', [AuthJWTController::class, 'logout']);
+        // for admin
+        // Articles operations
+        Route::controller(ArticleController::class)->group(function () {
+            Route::post('/articles', 'store');
+            Route::patch('/edit/articles/{id}', 'update')->where('id', '[0-9]+');
+            Route::delete('/delete/articles/{id}', 'destroy')->where('id', '[0-9]+');
+        });
+    });
 });

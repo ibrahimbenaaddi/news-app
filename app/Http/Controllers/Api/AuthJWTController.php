@@ -8,7 +8,7 @@ use App\Http\Requests\loginRequest;
 use App\Http\Resources\AdminResource;
 use Exception;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Http\Request;
 
 class AuthJWTController extends Controller
 {
@@ -28,14 +28,17 @@ class AuthJWTController extends Controller
                     401
                 );
             }
-
+            // for refreshToken
+            $expiration = 60 * 8 ;// 8 Houre
+            $refreshToken = auth('api')->setTTL($expiration)->fromUser(auth('api')->user()); // use FromUser to generate Jwt token from the Auth admin
             return response()->json(
                 [
                     'status' => true,
-                    'admin'  => new AdminResource(Auth::guard('api')->user()),
+                    'admin'  => new AdminResource(Auth::guard('api')->user())
                 ],
                 200
-            )->cookie('token',$token);
+            )->cookie('token',$token)
+             ->cookie('refreshToken',$refreshToken);
             
         } catch (Exception $err) {
             Log::error('The Error in AuthController(login) in api : ' . $err->getMessage());
@@ -49,17 +52,19 @@ class AuthJWTController extends Controller
         }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         try {
-            auth()->logout();
+            $refreshToken = $request->cookie('refreshToken');
+            auth('api')->logout();
+            auth('api')->setToken($refreshToken)->logout();
             return response()->json(
                 [
                     'status' => true,
                     'message' => 'Admin logged out successfully'
                 ],
                 200
-            );
+            )->cookie('token','',-1)->cookie('refreshToken','',-1);
         } catch (Exception $err) {
             Log::error('The Error in AuthController(logout) in api : ' . $err->getMessage());
             return response()->json(
@@ -70,5 +75,11 @@ class AuthJWTController extends Controller
                 404
             );
         }
+    }
+
+    public function refreshToken()
+    {
+        $newAccessToken = auth('api')->fromUser(auth('api')->user()) ;
+        return response()->json(status: 204)->cookie('token',$newAccessToken);
     }
 }

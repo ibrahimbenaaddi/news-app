@@ -18,7 +18,7 @@ export default function AdLayout() {
     }, [])
 
     useEffect(() => {
-        error && alert(`Failed To Logout : ${error}`);
+        error && alert(`Failed To Logout Try Again`);
         return () => setError(null);
     }, [error]);
 

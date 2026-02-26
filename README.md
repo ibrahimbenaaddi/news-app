@@ -46,7 +46,7 @@ It features a clean public homepage that displays all published blogs and news a
 ![Public](public.gif)
 
 ## Admin ScrennShot
-![Admin](Admin.gif)
+![Admin](admin.gif)
 
 ---
 ---

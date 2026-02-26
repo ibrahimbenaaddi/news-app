@@ -13,6 +13,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/backend': {
+        // this is a virtual Host of xampp
+        // put your loaclhost of The app laravel
         target: 'http://newsapp.op',
         changeOrigin: true,
         secure: false,

@@ -1,3 +1,57 @@
+# NewsApp FullStack
+
+NewsApp is a modern personal blog and news management platform built with Laravel.  
+It features a clean public homepage that displays all published blogs and news articles, along with a powerful admin dashboard for content management.
+
+---
+
+# Table of Contents
+- [Features](#features)
+- [Technology](#technology)
+- [Installation](#installation)
+- [Screenshots](#screenshots)
+---
+
+# Features
+
+- Public Home Page displaying all blogs and news
+- Admin Dashboard for full content control
+- Create, edit, update, and delete articles
+- Secure authentication system
+- Organized content management
+- Responsive and clean design
+
+---
+
+# Technology
+
+- Backend
+    - [Laravel](#laravel)
+    - RESTful API
+    - PHP
+    - MySQL
+    - AuthSystem
+        - SessionID(blade)
+        - JWT-Token And Sanctum (Reactjs)
+- FrontEnd
+    - Blade Templates
+    - [ReactJS](#reactjs)
+    - Bootstrap 
+
+---
+
+# ScreenShots
+
+## Public ScrennShot
+![Public](public.gif)
+
+## Admin ScrennShot
+![Admin](Admin.gif)
+
+---
+---
+
+# Laravel
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
@@ -57,3 +111,106 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+---
+
+## ReactJS
+
+# React + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## React Compiler
+
+The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+
+Note: This will impact Vite dev & build performances.
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+---
+---
+
+## Installation
+
+### 1. Clone the Repository
+
+``` bash
+git clone https://github.com/ibrahimbenaaddi/new-app.git
+cd your-project
+```
+
+### 2. Install Dependencies
+
+``` bash
+1 - composer install
+2 - cd Frontend/TheNewsApp
+3 - npm install
+4 - before run "npm run dev" configue vite proxy in frontend reactjs by the localhost of laravel
+```
+
+### 3. Setup Environment File
+
+``` bash
+Rename the File .env.exemple to .env
+cp .env.example .env
+```
+
+Update your `.env` file with your database credentials:
+
+    DB_DATABASE=your_database
+    DB_USERNAME=your_username
+    DB_PASSWORD=your_password
+
+### 4. Generate Application Key
+
+``` bash
+php artisan key:generate
+```
+
+### 5. Run Migrations
+
+``` bash
+php artisan migrate
+```
+
+(Optional: Seed the database)
+
+``` bash
+php artisan db:seed
+```
+
+### 6. Start Development Server
+
+``` bash
+php artisan serve
+
+Application will be available at:
+
+http://127.0.0.1:8000
+```
+
+### or : 
+``` bash
+in the main folder of the app run : 
+- npm install && npm run build
+- composer run dev
+
+your loaclhost will be :
+
+http://localhost:8000
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.

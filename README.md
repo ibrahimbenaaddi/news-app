@@ -160,7 +160,7 @@ cd your-project
 ### 3. Setup Environment File
 
 ``` bash
-Rename the File .env.exemple to .env
+Copying the File .env.exemple to .env
 cp .env.example .env
 ```
 

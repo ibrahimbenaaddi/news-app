@@ -152,9 +152,20 @@ cd your-project
 
 ``` bash
 1 - composer install
-2 - cd Frontend/TheNewsApp
-3 - npm install
-4 - before run "npm run dev" configue vite proxy in frontend reactjs by the localhost of laravel
+2 - create this Folders :
+2-1 - for Windows :
+mkdir storage\framework\cache\data
+mkdir storage\framework\sessions
+mkdir storage\framework\views
+mkdir storage\logs
+2-2 - for Others OS (linux/macOS):
+mkdir -p storage/framework/cache/data
+mkdir -p storage/framework/sessions
+mkdir -p storage/framework/views
+mkdir -p storage/logs
+3 - cd Frontend/TheNewsApp
+4 - npm install
+5 - before run "npm run dev" configue vite proxy in frontend reactjs by the localhost of laravel
 ```
 
 ### 3. Setup Environment File

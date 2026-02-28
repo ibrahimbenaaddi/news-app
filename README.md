@@ -211,8 +211,13 @@ php artisan migrate
 ``` bash
  php artisan db:seed --class=ArticleSeeder
 ```
-
-### 6. Start Development Server
+### 6. Add Admin data in table admins to your database to enter to dashboard
+``` bash
+ put your info :
+ USE yourdatabasename;
+ INSERT INTO `admins` (`adminID`, `firstname`, `lastname`, `email`, `password`, `created_at`, `updated_at`, `deleted_at`, `isAdmin`) VALUES (NULL, 'admin firstname', 'admin lastname', 'adminemail.example.com', 'yourpassword', NOW(), NOW(), NULL, '1');
+```
+### 7. Start Development Server
 
 ``` bash
 php artisan serve

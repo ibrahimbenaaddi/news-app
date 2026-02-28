@@ -215,7 +215,7 @@ php artisan migrate
 ``` bash
  put your info :
  USE yourdatabasename;
- INSERT INTO `admins` (`adminID`, `firstname`, `lastname`, `email`, `password`, `created_at`, `updated_at`, `deleted_at`, `isAdmin`) VALUES (NULL, 'admin firstname', 'admin lastname', 'adminemail.example.com', 'yourpassword', NOW(), NOW(), NULL, '1');
+ INSERT INTO `admins` (`adminID`, `firstname`, `lastname`, `email`, `password`, `created_at`, `updated_at`, `deleted_at`, `isAdmin`) VALUES (NULL, 'admin firstname', 'admin lastname', 'adminemail@example.com', 'yourpassword', NOW(), NOW(), NULL, '1');
 ```
 ### 7. Start Development Server
 

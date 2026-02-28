@@ -163,6 +163,14 @@ mkdir -p storage/framework/cache/data
 mkdir -p storage/framework/sessions
 mkdir -p storage/framework/views
 mkdir -p storage/logs
+3 - setup your storage and add default img for articles nonImages :
+3-1 - for Windows :
+mkdir storage/app/public/ArticlesImages
+move default.png storage/app/public/ArticlesImages
+3-2 - for Others OS (linux/macOS):
+mkdir -p storage/app/public/ArticlesImages
+mv default.png storage/app/public/ArticlesImages
+4 - php artisan storage:link
 3 - cd Frontend/TheNewsApp
 4 - npm install
 5 - before run "npm run dev" configue vite proxy in frontend reactjs by the localhost of laravel

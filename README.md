@@ -196,7 +196,7 @@ php artisan migrate
 (Optional: Seed the database)
 
 ``` bash
-php artisan db:seed
+ php artisan db:seed --class=ArticleSeeder
 ```
 
 ### 6. Start Development Server

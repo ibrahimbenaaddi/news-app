@@ -152,33 +152,34 @@ cd your-project
 
 ``` bash
 1 - composer install
-2 - create this Folders :
-2-1 - for Windows :
+2 - php artisan jwt:secret
+3 - create this Folders :
+3-1 - for Windows :
 mkdir storage\framework\cache\data
 mkdir storage\framework\sessions
 mkdir storage\framework\views
 mkdir storage\logs
-2-2 - for Others OS (linux/macOS):
+3-2 - for Others OS (linux/macOS):
 mkdir -p storage/framework/cache/data
 mkdir -p storage/framework/sessions
 mkdir -p storage/framework/views
 mkdir -p storage/logs
-3 - setup your storage and add default img for articles nonImages :
-3-1 - for Windows :
+4 - setup your storage and add default img for articles nonImages :
+4-1 - for Windows :
 mkdir storage/app/public/ArticlesImages
 move default.png storage/app/public/ArticlesImages
-3-2 - for Others OS (linux/macOS):
+4-2 - for Others OS (linux/macOS):
 mkdir -p storage/app/public/ArticlesImages
 mv default.png storage/app/public/ArticlesImages
-4 - remove any storage:link before :
-4-1 - for Windows :
+5 - remove any storage:link before :
+5-1 - for Windows :
 rmdir public\storage
-4-2 - for Others OS (linux/macOS):
+5-2 - for Others OS (linux/macOS):
 rm -rf public/storage
-5 - php artisan storage:link
-6 - cd Frontend/TheNewsApp
-7 - npm install
-8 - before run "npm run dev" configue vite proxy in frontend reactjs by the localhost of laravel
+6 - php artisan storage:link
+7 - cd Frontend/TheNewsApp
+8 - npm install
+9 - before run "npm run dev" configue vite proxy in frontend reactjs by the localhost of laravel
 ```
 
 ### 3. Setup Environment File

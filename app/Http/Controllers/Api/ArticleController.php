@@ -143,7 +143,7 @@ class ArticleController extends Controller
     {
         try {
             $validator = Validator::make(['id' => $id], [
-                'id' => 'required|integer|max:100'
+                'id' => 'required|integer'
             ]);
 
             if ($validator->fails()) {
@@ -190,7 +190,7 @@ class ArticleController extends Controller
         try {
 
             $validator = Validator::make(['id' => $id], [
-                'id' => 'required|integer|max:100'
+                'id' => 'required|integer'
             ]);
 
             if ($validator->fails()) {
@@ -235,7 +235,7 @@ class ArticleController extends Controller
         try {
             
             $validator = Validator::make(['id' => $id], [
-                'id' => 'required|integer|max:100'
+                'id' => 'required|integer'
             ]);
 
             if ($validator->fails()) {

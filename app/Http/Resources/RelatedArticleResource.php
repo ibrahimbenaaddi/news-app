@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ArticleResource extends JsonResource
+class RelatedArticleResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,14 +14,13 @@ class ArticleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        return  [
             'id' => $this->articleID,
             'title' => $this->title,
             'description' => $this->body,
             'category' => $this->category,
             'image' => $this->getImage(),
             'date' => $this->created_at->format('F d, Y'),
-            'relatedArticles' => RelatedArticleResource::collection($this->relatedArticles()->get()),
         ];
     }
 }

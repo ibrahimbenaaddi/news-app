@@ -3,9 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { getArticles } from '../../Articles/ArticleController.js'
 import { useEffect, useState } from 'react'
 
-document.title = 'NewsApp - Latest Articles';
-
 export default function Home() {
+    document.title = 'NewsApp - Latest Articles';
     const [searchParams, setSearchParams] = useSearchParams();
     const [articles, setArticles] = useState([]);
     const [errorsupport, setErrorsupport] = useState(null);
@@ -50,12 +49,12 @@ export default function Home() {
     }
     const find = (e) => {
         e.preventDefault();
-        setIsLoading(true);
         window.scrollTo({ top: 0, behavior: 'smooth' })
         if (!title) {
             setError('Plz enter A Solid Title');
             return;
         }
+        setIsLoading(true);
         fetchArticles({ page: 1, title: title })
     };
 

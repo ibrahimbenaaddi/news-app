@@ -10,20 +10,21 @@ use App\Http\Resources\ArticleResource;
 use App\Models\Article;
 use App\Services\ArticleService;
 use App\Traits\ApiResponses;
+use App\Traits\Helper;
 use App\Traits\LogError;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Validator;
 
 
 class ArticleController extends Controller
 {
-    use ApiResponses, LogError;
-    private ArticleService $service;
+    use ApiResponses, LogError, Helper;
 
+    private ArticleService $service;
+    private const PK_NAME = 'articleID';
+    private const TABLE = 'articles';
 
     public function __construct()
     {
@@ -36,11 +37,13 @@ class ArticleController extends Controller
     public function index(QueryRequest $request)
     {
         try {
-            $articles = $this->service->getAllArticles($request);
-            return ApiResponses::read(ArticleResource::collection($articles));
+            if (!$articles = $this->service->getAllArticles($request)) {
+                return self::failedRead();
+            };
+            return self::read(ArticleResource::collection($articles));
         } catch (Exception $error) {
-            LogError::theLog('index', 'ArticleController', $error);
-            return ApiResponses::failedRead();
+            self::theLog('index', 'ArticleController', $error);
+            return self::failedRead();
         }
     }
 
@@ -82,42 +85,16 @@ class ArticleController extends Controller
     public function show(int $id)
     {
         try {
-            $validator = Validator::make(['id' => $id], [
-                'id' => 'required|integer'
-            ]);
-
-            if ($validator->fails()) {
-                throw new Exception(self::ERROR['index']);
+            if (!self::validationId(self::PK_NAME, self::TABLE, $id)) {
+                return self::failedRead();
+            }
+            if (!$article = $this->service->getArticleById($id)) {
+                return self::failedRead();
             };
-
-            $article = $this->service->show($id);
-            if (blank($article)) throw new Exception(self::ERROR['index']);
-            $relatedArticles = $this->service->filterByCategory($article->category, $article->articleID) ?? null;
-            return response()->json(
-                [
-                    'status' => true,
-                    'article' => new ArticleResource($article),
-                    'relatedArticles' => [
-                        'articles' => ArticleResource::collection($relatedArticles),
-                        'pagination' => [
-                            'current_page' => $relatedArticles->currentPage(),
-                            'per_page' => $relatedArticles->count(),
-                            'total' => $relatedArticles->total(),
-                            'last_page' => $relatedArticles->lastPage(),
-                        ]
-                    ]
-                ],
-                200
-            );
-        } catch (Exception $err) {
-            Log::error('The Error in ArticleController(show) api : ' . $err->getMessage());
-            return response()->json(
-                [
-                    'status' => false,
-                    'message' => self::ERROR['index']
-                ],
-                404
-            );
+            return self::read(new ArticleResource($article));
+        } catch (Exception $error) {
+            self::theLog('show', 'ArticleController', $error);
+            return self::failedRead();
         }
     }
 
@@ -173,7 +150,7 @@ class ArticleController extends Controller
     {
         Gate::forUser($request->user())->authorize('isAdmin');
         try {
-            
+
             $validator = Validator::make(['id' => $id], [
                 'id' => 'required|integer'
             ]);

@@ -14,6 +14,5 @@ trait LogError
         if(!is_null($error)){
             Log::error('error is : ' . $error->getMessage());
         }
-        return false;
     }
 }

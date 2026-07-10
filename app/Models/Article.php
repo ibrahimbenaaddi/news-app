@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Article extends User
+class Article extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
 
     protected $table = 'articles';
     protected $primaryKey = 'articleID';
@@ -22,7 +23,12 @@ class Article extends User
 
     public function getImage()
     {
-        return is_null($this->image) ? asset('default.png') : asset('storage/' . $this->image);                                             
+        return is_null($this->image) ? asset('default.png') : asset('storage/' . $this->image);
     }
 
+    public function relatedArticles()
+    {
+        return $this->hasMany(Article::class, 'category', 'category')
+            ->where('articleID', '!=',$this->articleID)->latest()->limit(6);
+    }
 }

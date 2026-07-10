@@ -23,11 +23,11 @@ export async function getArticles(page, title = null) {
     }
 }
 
-export async function getArticleById(articleID, page = 1) {
+export async function getArticleById(articleID) {
     try {
         const response = await api({
             method: 'get',
-            url: `/backend/api/articles/${articleID}?page=${page}`,
+            url: `/backend/api/v1/articles/${articleID}`,
             headers: {
                 'Content-type': 'application/json',
                 'Accept': 'application/json'
@@ -42,24 +42,6 @@ export async function getArticleById(articleID, page = 1) {
     }
 }
 
-export async function getArticleByTitle(title, page = 1) {
-    try {
-        const response = await api({
-            method: 'get',
-            url: `/backend/api/articles/title/${title}?page=${page}`,
-            headers: {
-                'Content-type': 'application/json',
-                'Accept': 'application/json'
-            }
-        })
-        if (response.data.status) {
-            return response.data
-        }
-        return false
-    } catch {
-        return false
-    }
-}
 
 export async function updateArticle(articleData, articleID) {
     articleData.append('_method', 'PATCH');

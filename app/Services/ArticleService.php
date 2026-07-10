@@ -14,7 +14,8 @@ class ArticleService
 {
     use LogError, Searchable;
 
-    private const PER_PAGE = 10; // if you have php version > 8.2  use this is typed and safe private const int perPage = 10;
+    private const PER_PAGE = 9; // if you have php version > 8.2  use this is typed and safe private const int perPage = 10;
+
     public function getAllArticles(Request $request)
     {
         try {
@@ -24,30 +25,20 @@ class ArticleService
                 $query->where('title', 'like', $term);
             }
             $page = self::limitThePages($query, $request, self::PER_PAGE);
-            return $query->latest()->paginate(page: $page);
+            return $query->latest()->paginate(perPage: self::PER_PAGE, page: $page);
         } catch (Exception $error) {
-            return LogError::theLog('getAllArticles', 'ArticleService', $error);
+            self::theLog('getAllArticles', 'ArticleService', $error);
+            return false;
         }
     }
 
-    public function filterByCategory(string $category, int $id)
+    public function getArticleById(int $id)
     {
         try {
-            return  Article::where('articleID', "!=", $id)
-                ->where('category', $category)->paginate(4);
-        } catch (Exception $err) {
-            Log::error('The Error in ArticleService (filterByCategory) is : ' . $err->getMessage());
-            return null;
-        }
-    }
-
-    public function show(int $id)
-    {
-        try {
-            return  Article::find($id);
-        } catch (Exception $err) {
-            Log::error('The Error in ArticleService (show) is : ' . $err->getMessage());
-            return null;
+            return Article::findOrFail($id);
+        } catch (Exception $error) {
+            self::theLog('getArticleById', 'ArticleService', $error);
+            return false;
         }
     }
 

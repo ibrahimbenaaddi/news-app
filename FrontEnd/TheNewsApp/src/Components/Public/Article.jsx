@@ -5,68 +5,32 @@ import { useEffect, useState } from 'react'
 
 export default function Article() {
 
-    const [article, setArticle] = useState(null);
+    const [article, setArticle] = useState({});
     const [relatedArticles, setRelatedArticles] = useState([]);
     const [errorsupport, setErrorsupport] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [numberPages, setNumberPages] = useState(1)
-    const [currentPage, setCurrentPage] = useState(1)
-
     const { articleID } = useParams()
-    useEffect(() => {
-        getArticleById(articleID).then(res => {
-            if (!res) {
-                return setErrorsupport('No Article Found pls ContactUs');
+
+    const fetchArticleById = async (id) => {
+        try{
+            const response = await getArticleById(id);
+            if(!response?.status || !response?.data){
+                throw new Error('No Article Found pls ContactUs');
             }
-            document.title = res.article.title;
-            setArticle(res.article);
-            setRelatedArticles(res.relatedArticles.articles);
-            setNumberPages(res.relatedArticles.pagination.last_page);
-            setCurrentPage(res.relatedArticles.pagination.current_page)
+            setArticle(response.data);
+            setRelatedArticles(response.data.relatedArticles)
+            document.title = response.data.title;
+        }catch(error) {
+            setErrorsupport(error.message || 'SomeThings go wrong ?');
+        } finally{
             setIsLoading(false);
-        });
+        }
+    }
+
+    useEffect(() => {
+        fetchArticleById(articleID);
         return () => window.scrollTo({ top: 0, behavior: 'smooth' });
     }, [articleID]);
-
-    // for relatedArticles Pagination
-    useEffect(() => {
-        getArticleById(articleID, currentPage).then(res => {
-            if (!res) {
-                return setRelatedArticles(null);
-            }
-            setRelatedArticles(res.relatedArticles.articles);
-            setCurrentPage(res.relatedArticles.pagination.current_page)
-
-        });
-    }, [currentPage]);
-
-    // Links of pagination
-    const linksArr = (number, Cpage) => {
-        let links = [];
-        for (let i = 1; i <= number; i++) {
-            links.push(<li className={`page-item border border-black list ${Cpage == i ? 'active' : ''}`}><button onClick={() => setCurrentPage(i)} className="page-link text-center link">{i}</button></li>);
-        }
-        return links;
-    }
-
-    // forward and backward
-
-    const forward = (Cpage, Npage) => {
-        if (Cpage == Npage) {
-            setCurrentPage(1);
-            return;
-        }
-        setCurrentPage(Cpage + 1)
-
-    }
-    const backward = (Cpage, Npage) => {
-        if (Cpage == 1) {
-            setCurrentPage(Npage);
-            return;
-        }
-        setCurrentPage(Cpage - 1);
-
-    }
 
     return <StyleComponent>
         {/* navbare */}
@@ -101,7 +65,7 @@ export default function Article() {
                                 <p>{article.description}</p>
                             </article>
                             <section className="related-section" >
-                                <h2 className="section-title">Related Articles</h2>
+                                <h2 className="section-title">Latest Related Articles</h2>
                                 <div className="related-articles">
                                     {
                                         relatedArticles.length > 0 ? relatedArticles.map(({ image, category, title, id }, index) =>
@@ -119,24 +83,6 @@ export default function Article() {
                             </section>
                         </>
             }
-            {
-                numberPages > 1 && relatedArticles.length > 0 ? <div className="d-flex flex-row-reverse mt-2">
-                    <nav>
-                        <ul className="pagination pagination-lg">
-                            <li className="page-item border border-black list" >
-                                <button onClick={() => backward(Number(currentPage), Number(numberPages))} className="page-link text-center link" >&#8617;</button>
-                            </li>
-                            {
-                                linksArr(numberPages, currentPage)
-                            }
-                            <li className="page-item border border-black" >
-                                <button onClick={() => forward(Number(currentPage), Number(numberPages))} className="page-link text-center link">&#8618;</button>
-                            </li>
-                        </ul>
-                    </nav>
-                </div> : ""
-            }
-
         </main>
     </StyleComponent>
 }
@@ -432,18 +378,6 @@ const StyleComponent = Styled.div`
         align-items: center;
         gap: 6px;
     }
-    .list{
-        font-size:10px;
-        width : 38px;
-        height : 33px;
-    }
-    .link{
-        width : 38px;
-        height : 33px;
-        background-color: #252c39ff;
-        cursor: pointer;
-    }
-
     /* Responsive Design */
     @media (max-width: 768px) {
         .navbar {

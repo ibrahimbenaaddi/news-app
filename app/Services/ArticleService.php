@@ -3,36 +3,30 @@
 namespace App\Services;
 
 use App\Models\Article;
+use App\Traits\LogError;
+use App\Traits\Searchable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Http\Request;
 
 class ArticleService
 {
-    private const ERROR = [
-        'create' => 'Failed to create Article',
-        'update' => 'Failed to updating Article',
-        'delete' => 'Failed to deleting Article',
-    ];
+    use LogError, Searchable;
 
-    public function getAllArticles()
+    private const PER_PAGE = 10; // if you have php version > 8.2  use this is typed and safe private const int perPage = 10;
+    public function getAllArticles(Request $request)
     {
         try {
-            return Article::latest()->paginate(10);
-        } catch (Exception $err) {
-            Log::error('The Error in ArticleService (getAllArticles) is : ' . $err->getMessage());
-            return null;
-        }
-    }
-
-    public function findByTitle(string $title)
-    {
-        try {
-            // append title for prevent flash error from controller in view whene you switch between paginte page title send vide and flash an error
-            return Article::where('title', 'like', '%' . $title . '%')->paginate(10)->appends(['title' => $title]);
-        } catch (Exception $err) {
-            Log::error('The Error in ArticleService (findByTitle) is : ' . $err->getMessage());
-            return null;
+            $query = Article::query();
+            if ($request->filled('title')) {
+                $term = '%' . $request->query('title') . '%';
+                $query->where('title', 'like', $term);
+            }
+            $page = self::limitThePages($query, $request, self::PER_PAGE);
+            return $query->latest()->paginate(page: $page);
+        } catch (Exception $error) {
+            return LogError::theLog('getAllArticles', 'ArticleService', $error);
         }
     }
 

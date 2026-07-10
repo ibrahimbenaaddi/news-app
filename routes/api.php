@@ -5,14 +5,15 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AuthJWTController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('articles')->group(function () {
-
-    Route::controller(ArticleController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::get('/title/{title}', 'find');
-        Route::get('/{id}', 'show')->where('id', '[0-9]+');
+Route::prefix('v1')->group(function () {
+    Route::prefix('articles')->group(function () {
+        Route::controller(ArticleController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::get('/{id}', 'show')->where('id', '[0-9]+');
+        });
     });
 });
+
 
 Route::prefix('admin')->group(function () {
 
@@ -47,7 +48,7 @@ Route::prefix('jwt/admin')->group(function () {
         });
         Route::get('/refreshToken', [AuthJWTController::class, 'refreshToken']);
     });
-    
+
     Route::middleware('auth:api')->group(function () {
         Route::post('/logout', [AuthJWTController::class, 'logout']);
         // for admin

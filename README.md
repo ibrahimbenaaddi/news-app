@@ -164,22 +164,9 @@ mkdir -p storage/framework/cache/data
 mkdir -p storage/framework/sessions
 mkdir -p storage/framework/views
 mkdir -p storage/logs
-4 - setup your storage and add default img for articles nonImages :
-4-1 - for Windows :
-mkdir storage/app/public/ArticlesImages
-move default.png storage/app/public/ArticlesImages
-4-2 - for Others OS (linux/macOS):
-mkdir -p storage/app/public/ArticlesImages
-mv default.png storage/app/public/ArticlesImages
-5 - remove any storage:link before :
-5-1 - for Windows :
-rmdir public\storage
-5-2 - for Others OS (linux/macOS):
-rm -rf public/storage
-6 - php artisan storage:link
-7 - cd Frontend/TheNewsApp
-8 - npm install
-9 - before run "npm run dev" configue vite proxy in frontend reactjs by the localhost of laravel
+4 - php artisan storage:link
+5 - cd Frontend/TheNewsApp
+6 - npm install
 ```
 
 ### 3. Setup Environment File
@@ -231,8 +218,7 @@ http://127.0.0.1:8000
 ### or : 
 ``` bash
 in the main folder of the app run : 
-- npm install && npm run build
-- composer run dev
+- php artisan serve
 
 your loaclhost will be :
 

@@ -1,67 +1,62 @@
 import Styled from 'Styled-Components'
-import { Link, useSearchParams} from 'react-router-dom'
-import ArticleController from '../../Articles/ArticleController.js'
+import { Link, useSearchParams } from 'react-router-dom'
+import { getArticles } from '../../Articles/ArticleController.js'
 import { useEffect, useState } from 'react'
 
-export default function Home() {
-    const ArticleService = new ArticleController();
-    const [searchParams, setSearchParams] = useSearchParams();
+document.title = 'NewsApp - Latest Articles';
 
-    const [articles, setArticles] = useState(null);
+export default function Home() {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [articles, setArticles] = useState([]);
     const [errorsupport, setErrorsupport] = useState(null);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [numberPages, setNumberPages] = useState(1);
-    const [isSearching, setIsSearching] = useState(false)
-    
-    // find by Title 
     const [title, setTitle] = useState('');
-
     const currentPage = Number(searchParams.get("page")) || 1;
-
-    // fetch by title
-    const fetchArticleTitle = (title, page) => {
-        ArticleService.getArticleByTitle(title, page).then(res => {
-            if (!res) {
-                return setErrorsupport('No Article Found pls ContactUs');
+     
+    const fetchArticles = async ({ page, title = null }) => {
+        try {
+            const response = await getArticles(page, title);
+            if (!response?.status) {
+                throw new Error("Failed To Retrive Articles");
             }
-            if (res.articles.length < 0) {
-                return setErrorsupport(`No Article Found By Title : ${title}`);
+            if (response.data?.length == 0) {
+                throw new Error("No Articles Found");
             }
-            setArticles(res.articles);
-            setNumberPages(res.pagination.last_page);
-            setErrorsupport(null);
-        });
+            setArticles(response.data);
+            setNumberPages(response.pagination.last_page);
+        } catch (error) {
+            setErrorsupport(error.message || 'Something went wrong!');
+        } finally {
+            setIsLoading(false);
+        }
     }
 
-    // for AllArticle
     useEffect(() => {
-        document.title = 'NewsApp - Latest Articles';
-        if (isSearching) {
-            fetchArticleTitle(title, currentPage);
-            return window.scrollTo({ top: 0, behavior: 'smooth' })
+        if(!title){
+            setSearchParams({ page: currentPage });
         }
+        fetchArticles({ page: currentPage });
+    }, [currentPage]);
 
-        ArticleService.getArticles(currentPage).then(res => {
-            if (!res) {
-                return setErrorsupport('No Article Found pls ContactUs');
-            }
-            setArticles(res.articles);
-            setNumberPages(res.pagination.last_page);
-            setIsLoading(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }, [isSearching, currentPage]);
-
-    // for FindBytitle 
-    const find = () => {
-        if(title == '' || title.length < 0 ){
+    const handleChange = (e) => {
+        const value = e.target.value;
+        if (!value) {
+            setIsLoading(true);
+            fetchArticles({ page: 1 });
+        }
+        setTitle(value);
+    }
+    const find = (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        if (!title) {
             setError('Plz enter A Solid Title');
             return;
         }
-        fetchArticleTitle(title, currentPage);
-        setSearchParams({ page: 1 });
-        setIsSearching(true);
+        fetchArticles({ page: 1, title: title })
     };
 
     useEffect(() => {
@@ -69,7 +64,6 @@ export default function Home() {
         return () => clearTimeout(timeOut);
     }, [error]);
 
-    // Links of pagination
     const linksArr = (number, Cpage) => {
         let links = [];
         for (let i = 1; i <= number; i++) {
@@ -77,8 +71,6 @@ export default function Home() {
         }
         return links;
     };
-
-    // forward and backward
     const forward = (Cpage, Npage) => {
         if (Cpage == Npage) {
             setSearchParams({ page: 1 });
@@ -96,25 +88,26 @@ export default function Home() {
     return <StyledComponent>
         {/* navbare */}
         <nav className="navbar">
-            <a onClick={() => { 
-                setIsSearching(false) ;
+            <a onClick={() => {
                 setSearchParams({ page: 1 });
-                }} className="logo">
+            }} className="logo">
                 <i className="fas fa-newspaper"></i>
                 <h1>NewsApp</h1>
             </a>
             <div>
                 <div className="search-container">
-                    <input type="text" className="search-input" name='title' value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Search for news, topics, or authors..." />
-                    <button className="search-btn" onClick={find}>
-                        <i className="fas fa-search"></i> Search
-                    </button>
+                    <form onSubmit={find}>
+                        <input type="text" className="search-input" name='title' value={title} onChange={handleChange} placeholder="Search for news, topics, or authors..." />
+                        <button type="submit" className="search-btn">
+                            <i className="fas fa-search"></i> Search
+                        </button>
+                    </form>
                 </div>
             </div>
         </nav>
         {/* mainContent */}
         <main className="container" >
-            { error && <h5 className="alert alert-warning m-3 p-2">{error}</h5>  }
+            {error && <h5 className="alert alert-warning m-3 p-2">{error}</h5>}
             <div className="articles-grid position-relative">
                 {/* Article Card Template */}
                 {
@@ -134,26 +127,26 @@ export default function Home() {
                                         </div>
                                     </article>)
                                 }
-                                {
-                                    numberPages > 1 ? <div className="position-absolute bottom-0 end-0">
-                                        <nav>
-                                            <ul className="pagination pagination-lg">
-                                                <li className="page-item border border-black list" >
-                                                    <button onClick={() => backward(Number(currentPage), Number(numberPages))} className="page-link text-center link" >&#8617;</button>
-                                                </li>
-                                                {
-                                                    linksArr(numberPages, currentPage)
-                                                }
-                                                <li className="page-item border border-black" >
-                                                    <button onClick={() => forward(Number(currentPage), Number(numberPages))} className="page-link text-center link">&#8618;</button>
-                                                </li>
-                                            </ul>
-                                        </nav>
-                                    </div> : ''
-                                }
                             </>
                 }
             </div>
+            {
+                numberPages > 1 ? <div className="d-flex justify-content-center mt-5">
+                    <nav>
+                        <ul className="pagination pagination-lg">
+                            <li className="page-item border border-black list" >
+                                <button onClick={() => backward(Number(currentPage), Number(numberPages))} className="page-link text-center link" >&#8617;</button>
+                            </li>
+                            {
+                                linksArr(numberPages, currentPage)
+                            }
+                            <li className="page-item border border-black" >
+                                <button onClick={() => forward(Number(currentPage), Number(numberPages))} className="page-link text-center link">&#8618;</button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div> : ''
+            }
         </main>
     </StyledComponent >
 }

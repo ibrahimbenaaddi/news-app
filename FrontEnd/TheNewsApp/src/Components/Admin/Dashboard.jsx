@@ -1,9 +1,8 @@
-import ArticleController from '../../Articles/ArticleController.js'
+import { getArticles, destroyArticle } from '../../Articles/ArticleController.js'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 
 export default function Dashboard() {
-    const ArticleService = new ArticleController();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [articles, setArticles] = useState(null);
@@ -16,7 +15,7 @@ export default function Dashboard() {
 
     // fetchAllArticles
     const fetchAllArticles = async () => {
-        ArticleService.getArticles(currentPage).then(res => {
+        getArticles(currentPage).then(res => {
             if (!res) {
                 return setErrorsupport('No Article Found pls ContactUs');
             }
@@ -59,7 +58,7 @@ export default function Dashboard() {
     const deleteArticle = async (id) => {
         const resultat = window.confirm('are you sure you delete this article')
         if (resultat) {
-            const response = await ArticleService.deleteArticle(id);
+            const response = await destroyArticle(id);
             if (response.status) {
                 alert(`The article ID : ${id} , deleted successfully`);
                 fetchAllArticles();

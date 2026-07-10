@@ -13,9 +13,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/backend': {
-        // this is a virtual Host of xampp
-        // put your loaclhost of The app laravel
-        target: 'http://newsapp.op',
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/backend/, '')

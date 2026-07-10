@@ -1,9 +1,9 @@
-import ArticleController from '../../Articles/ArticleController.js'
+import { getArticleById } from '../../Articles/ArticleController.js'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 
 export default function EditArticle() {
-    const ArticleService = new ArticleController();
+
     const navigate = useNavigate();
     const [{ title, description, category }, setArticle] = useState({ title: '', description: '', category: '' });
     const [error, setError] = useState([]);
@@ -18,7 +18,7 @@ export default function EditArticle() {
     const { articleID } = useParams()
 
     useEffect(() => {
-        ArticleService.getArticleById(articleID).then(res => {
+        getArticleById(articleID).then(res => {
             if (!res) {
                 return setErrorsupport('No Article Found pls ContactUs');
             }

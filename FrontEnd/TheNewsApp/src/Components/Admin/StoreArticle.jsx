@@ -1,9 +1,8 @@
-import ArticleController from '../../Articles/ArticleController.js'
+import { storeArticle } from '../../Articles/ArticleController.js'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 
 export default function EditArticle() {
-    const ArticleService = new ArticleController();
 
     const navigate = useNavigate();
     const [error, setError] = useState([]);
@@ -19,7 +18,7 @@ export default function EditArticle() {
     }, [error]);
 
     // handleInputs
-    const handleInputs = (title, description ,category) => {
+    const handleInputs = (title, description, category) => {
         if (title.trim().length <= 14 || title.trim().length >= 99) {
             setError(prev => [...prev, 'title is must be in range 15~100 char']);
             return false;
@@ -59,14 +58,14 @@ export default function EditArticle() {
         return articleData;
     }
 
-    const storeArticle = async (e) => {
+    const SubmitArticle = async (e) => {
         e.preventDefault()
         if (!handleInputs(articleTitle.current.value, articleDescription.current.value, articleCategory.current.value)) {
             setError(prev => [...prev, 'Faild to Store The Article']);
             return;
         }
 
-        const response = await ArticleService.storeArticle(dataForm());
+        const response = await storeArticle(dataForm());
         if (response.status) {
             navigate('/Admin/Dashboard');
             return;
@@ -132,7 +131,7 @@ export default function EditArticle() {
                     <div className="upload-hint">
                         JPG, PNG or GIF
                     </div>
-                    <input type="file" id="imageFile"  accept=".png,.jpeg,.jpg" ref={articleImage} style={{display : 'none'}}/>
+                    <input type="file" id="imageFile" accept=".png,.jpeg,.jpg" ref={articleImage} style={{ display: 'none' }} />
                 </div>
             </div>
 
@@ -140,7 +139,7 @@ export default function EditArticle() {
                 <Link to="/Admin/Dashboard" className="btn btn-secondary" id="cancelBtn">
                     <i className="fas fa-times"></i> Cancel
                 </Link>
-                <button type="submit" className="btn btn-primary" id="publishBtn" onClick={storeArticle}>
+                <button type="submit" className="btn btn-primary" id="publishBtn" onClick={SubmitArticle}>
                     <i className="fas fa-paper-plane"></i> Publish Article
                 </button>
             </div>

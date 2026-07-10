@@ -9,6 +9,7 @@ class Article extends User
 {
     use SoftDeletes;
 
+    protected $table = 'articles';
     protected $primaryKey = 'articleID';
 
     protected $fillable = [
@@ -18,4 +19,10 @@ class Article extends User
         'category',
         'image',
     ];
+
+    public function getImage()
+    {
+        return is_null($this->image) ? asset('default.png') : asset('storage/' . $this->image);                                             
+    }
+
 }

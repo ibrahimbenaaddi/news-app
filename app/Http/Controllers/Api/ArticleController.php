@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QueryRequest;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
 use App\Services\ArticleService;
+use App\Traits\ApiResponses;
+use App\Traits\LogError;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Exception;
@@ -18,14 +21,9 @@ use Illuminate\Support\Facades\Validator;
 
 class ArticleController extends Controller
 {
+    use ApiResponses, LogError;
     private ArticleService $service;
-    private const ERROR = [
-        'index'  => 'No Articles retrived',
-        'find'   => 'Article Not Found',
-        'create' => 'Failed to create Article',
-        'update' => 'Failed to updating Article',
-        'delete' => 'Failed to deleting Article',
-    ];
+
 
     public function __construct()
     {
@@ -35,72 +33,14 @@ class ArticleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(QueryRequest $request)
     {
         try {
-            $articles = $this->service->getAllArticles();
-            if (blank($articles)) throw new Exception(self::ERROR['index']);
-            return response()->json(
-                [
-                    'status' => true,
-                    'articles' => ArticleResource::collection($articles),
-                    'pagination' => [
-                        'current_page' => $articles->currentPage(),
-                        'per_page' => $articles->count(),
-                        'total' => $articles->total(),
-                        'last_page' => $articles->lastPage(),
-                    ]
-                ],
-                200
-            );
-        } catch (Exception $err) {
-            Log::error('The Error in ArticleController(index) api : ' . $err->getMessage());
-            return response()->json(
-                [
-                    'status' => false,
-                    'message' => self::ERROR['index']
-                ],
-                404
-            );
-        }
-    }
-
-    public function find(string $title)
-    {
-        try {
-            // use Validation of laravel prevent XSS
-            $validator = Validator::make(['title' => $title], [
-                'title' => 'required|string|max:100'
-            ]);
-
-            if ($validator->fails()) {
-                throw new Exception(self::ERROR['index']);
-            };
-
-            $articles = $this->service->findByTitle($title);
-            if (blank($articles)) throw new Exception(self::ERROR['index']);
-            return response()->json(
-                [
-                    'status' => true,
-                    'articles' => ArticleResource::collection($articles),
-                    'pagination' => [
-                        'current_page' => $articles->currentPage(),
-                        'per_page' => $articles->count(),
-                        'total' => $articles->total(),
-                        'last_page' => $articles->lastPage(),
-                    ]
-                ],
-                200
-            );
-        } catch (Exception $err) {
-            Log::error('The Error in ArticleController(find) api : ' . $err->getMessage());
-            return response()->json(
-                [
-                    'status' => false,
-                    'message' => self::ERROR['index']
-                ],
-                404
-            );
+            $articles = $this->service->getAllArticles($request);
+            return ApiResponses::read(ArticleResource::collection($articles));
+        } catch (Exception $error) {
+            LogError::theLog('index', 'ArticleController', $error);
+            return ApiResponses::failedRead();
         }
     }
 

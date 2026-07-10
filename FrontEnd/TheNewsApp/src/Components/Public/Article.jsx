@@ -1,10 +1,9 @@
 import Styled from 'Styled-Components';
 import { Link, useParams } from 'react-router-dom'
-import ArticleController from '../../Articles/ArticleController.js'
+import { getArticleById } from '../../Articles/ArticleController.js'
 import { useEffect, useState } from 'react'
 
 export default function Article() {
-    const ArticleService = new ArticleController();
 
     const [article, setArticle] = useState(null);
     const [relatedArticles, setRelatedArticles] = useState([]);
@@ -14,9 +13,8 @@ export default function Article() {
     const [currentPage, setCurrentPage] = useState(1)
 
     const { articleID } = useParams()
-
     useEffect(() => {
-        ArticleService.getArticleById(articleID).then(res => {
+        getArticleById(articleID).then(res => {
             if (!res) {
                 return setErrorsupport('No Article Found pls ContactUs');
             }
@@ -32,7 +30,7 @@ export default function Article() {
 
     // for relatedArticles Pagination
     useEffect(() => {
-        ArticleService.getArticleById(articleID, currentPage).then(res => {
+        getArticleById(articleID, currentPage).then(res => {
             if (!res) {
                 return setRelatedArticles(null);
             }
@@ -123,20 +121,20 @@ export default function Article() {
             }
             {
                 numberPages > 1 && relatedArticles.length > 0 ? <div className="d-flex flex-row-reverse mt-2">
-                <nav>
-                    <ul className="pagination pagination-lg">
-                        <li className="page-item border border-black list" >
-                            <button onClick={() => backward(Number(currentPage), Number(numberPages))} className="page-link text-center link" >&#8617;</button>
-                        </li>
-                        {
-                            linksArr(numberPages, currentPage)
-                        }
-                        <li className="page-item border border-black" >
-                            <button onClick={() => forward(Number(currentPage), Number(numberPages))} className="page-link text-center link">&#8618;</button>
-                        </li>
-                    </ul>
-                </nav>
-            </div> : ""
+                    <nav>
+                        <ul className="pagination pagination-lg">
+                            <li className="page-item border border-black list" >
+                                <button onClick={() => backward(Number(currentPage), Number(numberPages))} className="page-link text-center link" >&#8617;</button>
+                            </li>
+                            {
+                                linksArr(numberPages, currentPage)
+                            }
+                            <li className="page-item border border-black" >
+                                <button onClick={() => forward(Number(currentPage), Number(numberPages))} className="page-link text-center link">&#8618;</button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div> : ""
             }
 
         </main>

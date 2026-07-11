@@ -34,9 +34,9 @@ export default function Home() {
 
     useEffect(() => {
         if(!title){
-            setSearchParams({ page: currentPage });
+            setSearchParams({ page: currentPage }); // if title renove back to page 1 
         }
-        fetchArticles({ page: currentPage });
+        fetchArticles({ page: currentPage, title: title }); // here keep title search with pagination
     }, [currentPage]);
 
     const handleChange = (e) => {

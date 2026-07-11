@@ -1,10 +1,10 @@
 import api from '../AuthSystem/api.js'
 
-export async function getArticles(page, title = null) {
+export async function getArticles(page, search = null) {
     try {
         let apiUrl = `/backend/api/v1/articles?page=${page}`;
-        if (title) {
-            apiUrl += `&title=${encodeURIComponent(title)}`;
+        if (search) {
+            apiUrl += `&search=${encodeURIComponent(search)}`;
         }
         const response = await api({
             method: 'get',

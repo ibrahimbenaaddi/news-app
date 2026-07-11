@@ -4,55 +4,84 @@ import { useState, useEffect } from 'react'
 
 export default function Dashboard() {
     const [searchParams, setSearchParams] = useSearchParams();
-
-    const [articles, setArticles] = useState(null);
+    const currentSearch = searchParams.get("search") || "";
+    const currentPage = Number(searchParams.get("page")) || 1;
+    const [articles, setArticles] = useState([]);
     const [errorsupport, setErrorsupport] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [numberPages, setNumberPages] = useState(1);
-    const [totalArticles, setTotalArticles] = useState(1);
-
-    const currentPage = Number(searchParams.get("page")) || 1;
-
-    // fetchAllArticles
-    const fetchAllArticles = async () => {
-        getArticles(currentPage).then(res => {
-            if (!res) {
-                return setErrorsupport('No Article Found pls ContactUs');
+    const [search, setSearch] = useState(currentSearch);
+    const [error, setError] = useState(null);
+    const [total, setTotal] = useState(1);
+    const fetchArticles = async (page, search = null) => {
+        setIsLoading(true);
+        setErrorsupport(null);
+        try {
+            const response = await getArticles(page, search);
+            if (!response?.status) {
+                throw new Error("Failed To Retrive Articles");
             }
-            setArticles(res.articles);
-            setTotalArticles(res.pagination.total);
-            setNumberPages(res.pagination.last_page);
+            if (response.data?.length == 0) {
+                throw new Error("No Articles Found");
+            }
+            setArticles(response.data);
+            setNumberPages(response.pagination.last_page);
+            setTotal(response.pagination.total)
+        } catch (error) {
+            setErrorsupport(error.message || 'Something went wrong!');
+        } finally {
             setIsLoading(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        }
     }
-    useEffect(() => {
-        fetchAllArticles()
-    }, [currentPage]);
 
-    // Links of pagination
-    const linksArr = (number, Cpage) => {
+    useEffect(() => {
+        fetchArticles(currentPage, currentSearch); // here keep search with pagination
+    }, [currentPage, currentSearch]);
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+        if (!value.trim()) {
+            updatePage(1);
+        }
+        setSearch(value);
+    }
+
+    const updatePage = (page, search = null) => {
+        let params = {};
+        if (search) {
+            params.search = search;
+        }
+        params.page = page;
+        setSearchParams(params);
+    }
+
+    const find = (e, page, search) => {
+        e.preventDefault();
+        if (!search.trim()) {
+            setError('Plz enter A Solid search');
+            return;
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        updatePage(page, search)
+    };
+
+    useEffect(() => {
+        const timeOut = setTimeout(() => setError(null), 3500);
+        return () => clearTimeout(timeOut);
+    }, [error]);
+
+    const linksArr = (number, Cpage, search = null) => {
         let links = [];
         for (let i = 1; i <= number; i++) {
-            links.push(<li className={`page-item border border-black list ${Cpage == i ? 'active' : ''}`}><button onClick={() => setSearchParams({ page: i })} className="page-link text-center link">{i}</button></li>);
+            links.push(<li key={i} className={`page-item border border-black list ${Cpage == i ? 'active' : ''}`}><button onClick={() => updatePage(i, search)} className="page-link text-center link">{i}</button></li>);
         }
         return links;
     };
-
-    // forward and backward
-    const forward = (Cpage, Npage) => {
-        if (Cpage == Npage) {
-            setSearchParams({ page: 1 });
-            return;
-        }
-        setSearchParams({ page: Cpage + 1 })
+    const forward = (Cpage, Npage, search = null) => {
+        updatePage(Cpage === Npage ? 1 : Cpage + 1, search)
     }
-    const backward = (Cpage, Npage) => {
-        if (Cpage == 1) {
-            setSearchParams({ page: Npage })
-            return;
-        }
-        setSearchParams({ page: Cpage - 1 })
+    const backward = (Cpage, Npage, search = null) => {
+        updatePage(Cpage === 1 ? Npage : Cpage - 1, search)
     };
 
     const deleteArticle = async (id) => {
@@ -68,6 +97,18 @@ export default function Dashboard() {
         }
     }
     return <>
+        <div className="section-header">
+            <h3 className="section-title">Recent Articles</h3>
+            <div className="search-container">
+                <form onSubmit={(e) => find(e, 1, search)}>
+                    <input type="text" className="search-input" value={search} onChange={handleChange} placeholder="Search by title, category..." />
+                    <button type="submit" className="search-btn">
+                        <i className="fas fa-search"></i> Search
+                    </button>
+                </form>
+                <Link to="/Admin/Add/Article" className="btn btn-primary ms-1"><i className="fas fa-plus"></i></Link>
+            </div>
+        </div>
         {
             errorsupport ? <h5>{errorsupport}</h5>
                 : isLoading ? <h1>isLoading...</h1>
@@ -78,18 +119,14 @@ export default function Dashboard() {
                                     <i className="fas fa-newspaper"></i>
                                 </div>
                                 <div className="stat-info">
-                                    <h3>{totalArticles}</h3>
+                                    <h3>{total}</h3>
                                     <p>Total Articles</p>
                                 </div>
                             </div>
                         </div>
 
                         <div className="dashboard-section">
-                            <div className="section-header">
-                                <h3 className="section-title">Recent Articles</h3>
-                                <Link to="/Admin/Add/Article" className="btn btn-primary"><i className="fas fa-plus"></i> Add New Article</Link>
-                            </div>
-
+                            {error && <h5 className="alert alert-warning m-3 p-2">{error}</h5>}
                             <div className="table-container">
                                 <table>
                                     <thead>
@@ -127,13 +164,13 @@ export default function Dashboard() {
                                     <nav>
                                         <ul className="pagination pagination-lg">
                                             <li className="page-item border border-black list" >
-                                                <button onClick={() => backward(Number(currentPage), Number(numberPages))} className="page-link text-center link" >&#8617;</button>
+                                                <button onClick={() => backward(Number(currentPage), Number(numberPages), search)} className="page-link text-center link" >&#8617;</button>
                                             </li>
                                             {
-                                                linksArr(numberPages, currentPage)
+                                                linksArr(numberPages, currentPage, search)
                                             }
                                             <li className="page-item border border-black" >
-                                                <button onClick={() => forward(Number(currentPage), Number(numberPages))} className="page-link text-center link">&#8618;</button>
+                                                <button onClick={() => forward(Number(currentPage), Number(numberPages), search)} className="page-link text-center link">&#8618;</button>
                                             </li>
                                         </ul>
                                     </nav>

@@ -20,9 +20,9 @@ class ArticleService
     {
         try {
             $query = Article::query();
-            if ($request->filled('title')) {
-                $term = '%' . $request->query('title') . '%';
-                $query->where('title', 'like', $term);
+            if ($request->filled('search')) {
+                $term = '%' . $request->query('search') . '%';
+                $query->where('category', 'like', $term)->orWhere('title', "like", $term);
             }
             $page = self::limitThePages($query, $request, self::PER_PAGE);
             return $query->latest()->paginate(perPage: self::PER_PAGE, page: $page);

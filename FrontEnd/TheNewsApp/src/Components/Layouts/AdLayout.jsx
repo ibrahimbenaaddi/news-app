@@ -106,6 +106,42 @@ const StyleComponent = Styled.div`
         min-height: 100vh;
     }
 
+        .search-container {
+        display: flex;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 8px 0 0 8px;
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+        font-size: 1rem;
+        outline: none;
+    }
+
+    .search-input::placeholder {
+        color: #aaa;
+    }
+
+    .search-btn {
+        background-color: #3a86ff;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0 8px 8px 0;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+
+    .search-btn:hover {
+        background-color: #2667cc;
+    }
+
     /* Sidebar */
     .sidebar {
         width: 250px;
@@ -651,6 +687,9 @@ const StyleComponent = Styled.div`
             align-self: flex-end;
         }
 
+        .search-container {
+            max-width: 100%;
+        }
         .article-form {
             padding: 1.5rem;
         }

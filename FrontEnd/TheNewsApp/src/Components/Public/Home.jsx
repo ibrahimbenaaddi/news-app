@@ -6,15 +6,18 @@ import { useEffect, useState } from 'react'
 export default function Home() {
     document.title = 'NewsApp - Latest Articles';
     const [searchParams, setSearchParams] = useSearchParams();
+    const currentTitle = searchParams.get("title") || "";
+    const currentPage = Number(searchParams.get("page")) || 1;
     const [articles, setArticles] = useState([]);
     const [errorsupport, setErrorsupport] = useState(null);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [numberPages, setNumberPages] = useState(1);
-    const [title, setTitle] = useState('');
-    const currentPage = Number(searchParams.get("page")) || 1;
-     
+    const [title, setTitle] = useState(currentTitle);
+
     const fetchArticles = async ({ page, title = null }) => {
+        setIsLoading(true);
+        setErrorsupport(null);
         try {
             const response = await getArticles(page, title);
             if (!response?.status) {
@@ -33,29 +36,34 @@ export default function Home() {
     }
 
     useEffect(() => {
-        if(!title){
-            setSearchParams({ page: currentPage }); // if title renove back to page 1 
-        }
-        fetchArticles({ page: currentPage, title: title }); // here keep title search with pagination
-    }, [currentPage]);
+        fetchArticles({ page: currentPage, title: currentTitle }); // here keep title search with pagination
+    }, [currentPage, currentTitle]);
 
     const handleChange = (e) => {
         const value = e.target.value;
-        if (!value) {
-            setIsLoading(true);
-            fetchArticles({ page: 1 });
+        if (!value.trim()) {
+            updatePage(1);
         }
         setTitle(value);
     }
-    const find = (e) => {
+
+    const updatePage = (page, title = null) => {
+        let params = {};
+        if (title) {
+            params.title = title;
+        }
+        params.page = page;
+        setSearchParams(params);
+    }
+
+    const find = (e, page, title) => {
         e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-        if (!title) {
+        if (!title.trim()) {
             setError('Plz enter A Solid Title');
             return;
         }
-        setIsLoading(true);
-        fetchArticles({ page: 1, title: title })
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        updatePage(page, title)
     };
 
     useEffect(() => {
@@ -63,39 +71,32 @@ export default function Home() {
         return () => clearTimeout(timeOut);
     }, [error]);
 
-    const linksArr = (number, Cpage) => {
+    const linksArr = (number, Cpage, title = null) => {
         let links = [];
         for (let i = 1; i <= number; i++) {
-            links.push(<li className={`page-item border border-black list ${Cpage == i ? 'active' : ''}`}><button onClick={() => setSearchParams({ page: i })} className="page-link text-center link">{i}</button></li>);
+            links.push(<li key={i} className={`page-item border border-black list ${Cpage == i ? 'active' : ''}`}><button onClick={() => updatePage(i, title)} className="page-link text-center link">{i}</button></li>);
         }
         return links;
     };
-    const forward = (Cpage, Npage) => {
-        if (Cpage == Npage) {
-            setSearchParams({ page: 1 });
-            return;
-        }
-        setSearchParams({ page: Cpage + 1 })
+    const forward = (Cpage, Npage, title = null) => {
+        updatePage(Cpage === Npage ? 1 : Cpage + 1, title)
     }
-    const backward = (Cpage, Npage) => {
-        if (Cpage == 1) {
-            setSearchParams({ page: Npage })
-            return;
-        }
-        setSearchParams({ page: Cpage - 1 })
+    const backward = (Cpage, Npage, title = null) => {
+        updatePage(Cpage === 1 ? Npage : Cpage - 1, title)
     };
     return <StyledComponent>
         {/* navbare */}
         <nav className="navbar">
             <a onClick={() => {
-                setSearchParams({ page: 1 });
+                setTitle("");
+                updatePage(1, "")
             }} className="logo">
                 <i className="fas fa-newspaper"></i>
                 <h1>NewsApp</h1>
             </a>
             <div>
                 <div className="search-container">
-                    <form onSubmit={find}>
+                    <form onSubmit={(e) => find(e, 1, title)}>
                         <input type="text" className="search-input" name='title' value={title} onChange={handleChange} placeholder="Search for news, topics, or authors..." />
                         <button type="submit" className="search-btn">
                             <i className="fas fa-search"></i> Search
@@ -134,13 +135,13 @@ export default function Home() {
                     <nav>
                         <ul className="pagination pagination-lg">
                             <li className="page-item border border-black list" >
-                                <button onClick={() => backward(Number(currentPage), Number(numberPages))} className="page-link text-center link" >&#8617;</button>
+                                <button onClick={() => backward(Number(currentPage), Number(numberPages), title)} className="page-link text-center link" >&#8617;</button>
                             </li>
                             {
-                                linksArr(numberPages, currentPage)
+                                linksArr(numberPages, currentPage, title)
                             }
                             <li className="page-item border border-black" >
-                                <button onClick={() => forward(Number(currentPage), Number(numberPages))} className="page-link text-center link">&#8618;</button>
+                                <button onClick={() => forward(Number(currentPage), Number(numberPages), title)} className="page-link text-center link">&#8618;</button>
                             </li>
                         </ul>
                     </nav>

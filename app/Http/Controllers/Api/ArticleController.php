@@ -58,24 +58,13 @@ class ArticleController extends Controller
             if ($request->hasFile('image')) {
                 $validationData['image'] = $this->storeImage($request->file('image'));
             }
-            $article = $this->service->store($validationData);
-            if (!$article) throw new Exception(self::ERROR['create']);
-            return response()->json(
-                [
-                    'status' => true,
-                    'article' => new ArticleResource($article)
-                ],
-                201
-            );
-        } catch (Exception $err) {
-            Log::error('The Error in ArticleController(store) api : ' . $err->getMessage());
-            return response()->json(
-                [
-                    'status' => false,
-                    'message' => self::ERROR['create']
-                ],
-                500
-            );
+            if (!$article = $this->service->store($validationData)) {
+                return self::failedCreate();
+            }
+            return self::create(new ArticleResource($article));
+        } catch (Exception $error) {
+            self::theLog('store', 'ArticleController', $error);
+            return self::failedCreate();
         }
     }
 
@@ -105,41 +94,25 @@ class ArticleController extends Controller
     {
         Gate::forUser($request->user())->authorize('isAdmin');
         try {
-
-            $validator = Validator::make(['id' => $id], [
-                'id' => 'required|integer'
-            ]);
-
-            if ($validator->fails()) {
-                throw new Exception(self::ERROR['index']);
+            if (!self::validationId(self::PK_NAME, self::TABLE, $id)) {
+                return self::failedUpdate();
             }
+            if (!$article = $this->service->getArticleById($id)) {
+                return self::failedUpdate();
+            };
 
-            // first check if the article exists
-            $article = $this->service->show($id);
-
-            if (blank($article)) throw new Exception(self::ERROR['find']);
             $validationData = $request->validated();
             if ($request->hasFile('image')) {
                 $this->deleteImage($article);
                 $validationData['image'] = $this->storeImage($request->file('image'));
             }
-            if (!$this->service->update($validationData, $article)) throw new Exception(self::ERROR['update']);
-            return response()->json(
-                [
-                    'status' => true,
-                    'message' => 'Your updating is done',
-                ],
-                200
-            );
-        } catch (Exception $err) {
-            Log::error('The Error in ArticleController(Update) in api : ' . $err->getMessage());
-            return response()->json(
-                [
-                    'status' => false,
-                    'message' => self::ERROR['update']
-                ],
-                500
-            );
+            if (!$article = $this->service->update($validationData, $article)) {
+                return self::failedUpdate();
+            };
+            return self::updated(new ArticleResource($article));
+        } catch (Exception $error) {
+            self::theLog('update', 'ArticleController', $error);
+            return self::failedUpdate();
         }
     }
 
@@ -150,36 +123,20 @@ class ArticleController extends Controller
     {
         Gate::forUser($request->user())->authorize('isAdmin');
         try {
-
-            $validator = Validator::make(['id' => $id], [
-                'id' => 'required|integer'
-            ]);
-
-            if ($validator->fails()) {
-                throw new Exception(self::ERROR['index']);
+            if (!self::validationId(self::PK_NAME, self::TABLE, $id)) {
+                return self::failedDelete();
             }
-
-            // first check if the article exists
-            $article = $this->service->show($id);
-            if (blank($article)) throw new Exception(self::ERROR['find']);
-            if (!$this->service->delete($article)) throw new Exception(self::ERROR['delete']);
+            if (!$article = $this->service->getArticleById($id)) {
+                return self::failedDelete();
+            };
+            if (!$this->service->delete($article)) {
+                return self::failedDelete();
+            }
             $this->deleteImage($article);
-            return response()->json(
-                [
-                    'status' => true,
-                    'message' => 'Your deleting is done',
-                ],
-                200
-            );
-        } catch (Exception $err) {
-            Log::error('The Error in ArticleController(delete) in api : ' . $err->getMessage());
-            return response()->json(
-                [
-                    'status' => false,
-                    'message' => self::ERROR['delete']
-                ],
-                500
-            );
+            return self::delete();
+        } catch (Exception $error) {
+            self::theLog('delete', 'ArticleController', $error);
+            return self::failedDelete();
         }
     }
 

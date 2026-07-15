@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 export default function Home() {
     document.search = 'NewsApp - Latest Articles';
     const [searchParams, setSearchParams] = useSearchParams();
-    const currentSearch = searchParams.get("search") || "";
+    const currentSearch = searchParams.get("search") || ""; // when setSearchParams(params) the currentChange that why I put in dependecies of useEffect()
     const currentPage = Number(searchParams.get("page")) || 1;
     const [articles, setArticles] = useState([]);
     const [errorsupport, setErrorsupport] = useState(null);

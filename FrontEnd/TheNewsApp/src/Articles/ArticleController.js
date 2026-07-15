@@ -44,11 +44,11 @@ export async function getArticleById(articleID) {
 
 
 export async function updateArticle(articleData, articleID) {
-    articleData.append('_method', 'PATCH');
+    articleData._method = 'PATCH';
     const response = await api({
         method: 'post',
-        // url: `/backend/api/admin/edit/articles/${articleID}`, // for Sanctum
-        url: `/backend/api/jwt/admin/edit/articles/${articleID}`, // for JWT
+        // url: `/backend/api/v1/admin/articles/${articleID}`, // for Sanctum
+        url: `/backend/api/v1/jwt/admin/articles/${articleID}`, // for JWT
         headers: {
             'Content-Type': 'multipart/form-data'
         },
@@ -67,8 +67,8 @@ export async function updateArticle(articleData, articleID) {
 export async function storeArticle(articleData) {
     const response = await api({
         method: 'post',
-        // url: `/backend/api/admin/articles`, // for Sanctum
-        url: `/backend/api/jwt/admin/articles`, // fro JWT
+        // url: `/backend/api/v1/admin/articles`, // for Sanctum
+        url: `/backend/api/v1/jwt/admin/articles`, // fro JWT
         headers: {
             'Content-Type': 'multipart/form-data'
         },
@@ -87,8 +87,8 @@ export async function storeArticle(articleData) {
 export async function destroyArticle(articleID) {
     const response = await api({
         method: 'delete',
-        // url: `/backend/api/admin/delete/articles/${articleID}`, // for Sanctum
-        url: `/backend/api/jwt/admin/delete/articles/${articleID}`, // for JWT
+        // url: `/backend/api/v1/admin/articles/${articleID}`, // for Sanctum
+        url: `/backend/api/v1/jwt/admin/articles/${articleID}`, // for JWT
         headers: {
             'Content-Type': 'multipart/form-data'
         }

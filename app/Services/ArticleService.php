@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Article;
 use App\Traits\LogError;
 use App\Traits\Searchable;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\Request;
@@ -46,28 +45,33 @@ class ArticleService
     {
         try {
             DB::beginTransaction();
-            $article = Article::create($data);
-            if (!$article) throw new Exception(self::ERROR['create']);
+            if (!$article = Article::create($data)) {
+                DB::rollBack();
+                return false;
+            }
             DB::commit();
             return $article;
-        } catch (Exception $err) {
+        } catch (Exception $error) {
             DB::rollBack();
-            Log::error('The Error in ArticleService (store) is : ' . $err->getMessage());
+            self::theLog('store', 'ArticleService', $error);
             return false;
         }
     }
 
-    public function update(array $data, Article $article): bool
+    public function update(array $data, Article $article)
     {
         try {
             DB::beginTransaction();
-            $isUpdated = $article->update($data);
-            if (!$isUpdated) throw new Exception(self::ERROR['update']);
+            if (!$article->update($data)) {
+                DB::rollBack();
+                return false;
+            }
             DB::commit();
-            return true;
-        } catch (Exception $err) {
+            $article->refresh();
+            return $article;
+        } catch (Exception $error) {
             DB::rollBack();
-            Log::error('The Error in ArticleService (update) is : ' . $err->getMessage());
+            self::theLog('update', 'ArticleService', $error);
             return false;
         }
     }
@@ -76,13 +80,15 @@ class ArticleService
     {
         try {
             DB::beginTransaction();
-            $isDeleted = $article->delete();
-            if (!$isDeleted) throw new Exception(self::ERROR['delete']);
+            if (!$article->delete()){
+                DB::rollBack();
+                return false;
+            };
             DB::commit();
             return true;
-        } catch (Exception $err) {
+        } catch (Exception $error) {
             DB::rollBack();
-            Log::error('The Error in ArticleService (delete) is : ' . $err->getMessage());
+            self::theLog('delete', 'ArticleService', $error);
             return false;
         }
     }

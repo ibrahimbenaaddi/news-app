@@ -1,89 +1,89 @@
-import { getArticleById } from '../../Articles/ArticleController.js'
+import { getArticleById, updateArticle } from '../../Articles/ArticleController.js'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function EditArticle() {
 
     const navigate = useNavigate();
-    const [{ title, description, category }, setArticle] = useState({ title: '', description: '', category: '' });
+    const [article, setArticle] = useState({
+        title: '',
+        body: '',
+        category: '',
+        image: null
+    });
     const [error, setError] = useState([]);
     const [errorsupport, setErrorsupport] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-
-    const articleImage = useRef(null);
-    const articleDescription = useRef(null);
-    const articleCategory = useRef(null);
-    const articleTitle = useRef(null);
-
     const { articleID } = useParams()
 
-    useEffect(() => {
-        getArticleById(articleID).then(res => {
-            if (!res) {
-                return setErrorsupport('No Article Found pls ContactUs');
+    const fetchArticleById = async (id) => {
+        try {
+            const response = await getArticleById(id);
+            if (!response?.status || !response?.data) {
+                setErrorsupport('Failed To retrive the article');
+                return;
             }
-            setArticle(res.article);
+            setArticle({
+                title: response.data.title,
+                body: response.data.description,
+                category: response.data.category,
+            });
+            document.title = response.data.title;
+        } catch (error) {
+            setErrorsupport(error.message || 'SomeThings go wrong ?');
+        } finally {
             setIsLoading(false);
-        });
-        return () => window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, [articleID]);
+        }
+    }
 
     useEffect(() => {
+        fetchArticleById(articleID);
+    }, [articleID]);
+    useEffect(() => {
+        if (error.length === 0) return;
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+
         const timeout = setTimeout(() => setError([]), 3500);
+
         return () => clearTimeout(timeout);
     }, [error]);
 
-    // handleInputs
-    const handleInputs = (title, description) => {
-        if (title.trim().length < 14 || title.trim().length > 99) {
-            setError(prev => [...prev, 'title is must be in range 15~100 char']);
-            return false;
+    const handleChanges = (e) => {
+        const { name, value, files, type } = e.target;
+        setArticle({
+            [name]: type === 'file' ? files[0] : value,
+        });
+    };
+    const validationsInputs = ({ title, body }) => {
+        if (title?.trim()) {
+            if (title.trim().length <= 14 || title.trim().length >= 99) {
+                setError(prev => [...prev, 'title is required and must be in range 15~100 char']);
+                return false;
+            }
         }
-        if (description.trim().length < 349) {
-            setError(prev => [...prev, 'description must be greater Than 350 char']);
-            return false;
+        if (body?.trim()) {
+            if (body?.trim().length <= 349) {
+                setError(prev => [...prev, 'description is required and must be greater Than 350 char']);
+                return false;
+            }
         }
         return true;
     }
 
-    const dataForm = () => {
-        const articleData = new FormData();
-        const fields = [
-            { name: 'image', ref: articleImage, type: 'file' },
-            { name: 'title', ref: articleTitle, type: 'text' },
-            { name: 'body', ref: articleDescription, type: 'text' },
-            { name: 'category', ref: articleCategory, type: 'text' },
-
-        ];
-
-        fields.forEach(({ name, ref, type }) => {
-            if (type === 'file') {
-                if (ref.current?.files?.[0]) {
-                    articleData.append(name, ref.current.files[0]);
-                }
-            } else {
-                if (ref.current?.value) {
-                    articleData.append(name, ref.current.value);
-                }
+    const update = async (e, article, id) => {
+        e.preventDefault();
+        if (validationsInputs(article)) {
+            const response = await updateArticle(article, id);
+            if (response.status) {
+                navigate('/Admin/Dashboard');
+                return;
             }
-        });
-        return articleData;
-    }
-
-    const updateArticle = async (e) => {
-        e.preventDefault()
-        if (!handleInputs(articleTitle.current.value, articleDescription.current.value)) {
-            setError(prev => [...prev, 'Faild to Update The Article']);
-            return;
+            setError(prev => [...prev, response.message || 'Failed To Update Article']);
         }
-
-        const response = await ArticleService.updateArticle(dataForm(), articleID);
-        if (response.status) {
-            navigate('/Admin/Dashboard');
-            return;
-        }
-        setError(prev => [...prev, response.message]);
-
     }
 
     return <>
@@ -107,16 +107,16 @@ export default function EditArticle() {
                                 </ul>
                             </div>
                         }
-                        <form className="article-form" id="articleForm" encType="multipart/form-data">
+                        <form className="article-form" id="articleForm" encType="multipart/form-data" onSubmit={(e) => update(e, article, articleID)} >
                             <div className="form-group">
                                 <label className="form-label" htmlFor="articleTitle">Article Title</label>
-                                <input type="text" className="form-input" id="articleTitle" ref={articleTitle} defaultValue={title} placeholder="Enter your article title" />
+                                <input type="text" className="form-input" id="articleTitle" name="title" value={article.title} onChange={handleChanges} placeholder="Enter your article title" />
 
                             </div>
 
                             <div className="form-group">
                                 <label className="form-label" htmlFor="articleCategory">Category</label>
-                                <select className="form-select" id="articleCategory" ref={articleCategory} defaultValue={category}>
+                                <select className="form-select" id="articleCategory" name="category" value={article.category} onChange={handleChanges} >
                                     <option value="">Select a category</option>
                                     <option value="Technology" >Technology</option>
                                     <option value="Business" >Business</option>
@@ -129,12 +129,12 @@ export default function EditArticle() {
 
                             <div className="form-group">
                                 <label className="form-label" htmlFor="articleBody">Article Content</label>
-                                <textarea className="form-textarea" id="articleBody" name="description" placeholder="Write your article content here..." defaultValue={description} ref={articleDescription}></textarea>
+                                <textarea className="form-textarea" id="articleBody" placeholder="Write your article content here..." name="body" value={article.body} onChange={handleChanges} ></textarea>
                             </div>
 
-                            <div className="form-group" onClick={() => {articleImage.current.click()}}>
-                                <label className="form-label" htmlFor="imageFile" >Featured Image</label>
-                                <div className="image-upload" id="imageUpload">
+                            <div className="form-group">
+                                <h5 className="form-label" htmlFor='imageFile' >Featured Image</h5>
+                                <label className="image-upload w-100" id="imageUpload" >
                                     <div className="upload-icon">
                                         <i className="fas fa-cloud-upload-alt"></i>
                                     </div>
@@ -144,15 +144,15 @@ export default function EditArticle() {
                                     <div className="upload-hint">
                                         JPG, PNG or GIF
                                     </div>
-                                    <input type="file" id="imageFile" accept=".png,.jpeg,.jpg" ref={articleImage} style={{display : 'none'}}/>
-                                </div>
+                                    <input type="file" id="imageFile" accept=".png,.jpeg,.jpg" name='image' onChange={handleChanges} style={{ display: 'none' }} />
+                                </label>
                             </div>
 
                             <div className="form-actions">
                                 <Link to="/Admin/Dashboard" className="btn btn-secondary" id="cancelBtn">
                                     <i className="fas fa-times"></i> Cancel
                                 </Link>
-                                <button type="submit" className="btn btn-primary" id="publishBtn" onClick={updateArticle}>
+                                <button type="submit" className="btn btn-primary" id="publishBtn">
                                     <i className="fas fa-paper-plane"></i> Update Article
                                 </button>
                             </div>

@@ -85,15 +85,15 @@ export default function Dashboard() {
     };
 
     const deleteArticle = async (id) => {
-        const resultat = window.confirm('are you sure you delete this article')
+        const resultat = window.confirm('are you sure you want delete this article')
         if (resultat) {
             const response = await destroyArticle(id);
             if (response.status) {
                 alert(`The article ID : ${id} , deleted successfully`);
-                fetchAllArticles();
+                fetchArticles(1);
                 return;
             }
-            alert(response.message);
+            alert('Failed To delete Article');
         }
     }
     return <>

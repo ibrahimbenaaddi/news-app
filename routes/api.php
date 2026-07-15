@@ -12,26 +12,30 @@ Route::prefix('v1')->group(function () {
             Route::get('/{id}', 'show')->where('id', '[0-9]+');
         });
     });
-});
-
-
-Route::prefix('admin')->group(function () {
-
-    Route::post('/login', [AuthController::class, 'login']);
-
-    Route::middleware('auth:sanctum')->group(function () {
-
-        Route::get('/amIAuth', function () {
-            return response()->json(['status' => true], 200);
+    // Admin
+    Route::prefix('jwt/admin')->group(function () {
+        Route::middleware('auth:api')->group(function () {
+            Route::post('/logout', [AuthJWTController::class, 'logout']);
+            Route::controller(ArticleController::class)->group(function () {
+                Route::post('/articles', 'store');
+                Route::patch('/articles/{id}', 'update')->where('id', '[0-9]+');
+                Route::delete('/articles/{id}', 'destroy')->where('id', '[0-9]+');
+            });
         });
-
-        Route::post('/logout', [AuthController::class, 'logout']);
-        // for admin
-        // Articles operations
-        Route::controller(ArticleController::class)->group(function () {
-            Route::post('/articles', 'store');
-            Route::patch('/edit/articles/{id}', 'update')->where('id', '[0-9]+');
-            Route::delete('/delete/articles/{id}', 'destroy')->where('id', '[0-9]+');
+    });
+    // Sanctum
+    Route::prefix('admin')->group(function () {
+        Route::post('/login', [AuthController::class, 'login']);
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::get('/amIAuth', function () {
+                return response()->json(['status' => true], 200);
+            });
+            Route::post('/logout', [AuthController::class, 'logout']);
+            Route::controller(ArticleController::class)->group(function () {
+                Route::post('/articles', 'store');
+                Route::patch('/articles/{id}', 'update')->where('id', '[0-9]+');
+                Route::delete('/articles/{id}', 'destroy')->where('id', '[0-9]+');
+            });
         });
     });
 });
@@ -47,16 +51,5 @@ Route::prefix('jwt/admin')->group(function () {
             return response()->json(['status' => true], 200);
         });
         Route::get('/refreshToken', [AuthJWTController::class, 'refreshToken']);
-    });
-
-    Route::middleware('auth:api')->group(function () {
-        Route::post('/logout', [AuthJWTController::class, 'logout']);
-        // for admin
-        // Articles operations
-        Route::controller(ArticleController::class)->group(function () {
-            Route::post('/articles', 'store');
-            Route::patch('/edit/articles/{id}', 'update')->where('id', '[0-9]+');
-            Route::delete('/delete/articles/{id}', 'destroy')->where('id', '[0-9]+');
-        });
     });
 });

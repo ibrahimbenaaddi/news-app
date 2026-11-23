@@ -26,12 +26,8 @@ export default function AdLayout() {
     // logout
     const logout = async (e) => {
         e.preventDefault();
-        const response = await AuthService.logout();
-        if (response.status) {
-            navigate('/Admin/login');
-            return;
-        };
-        setError(response.message)
+        await AuthService.logout();
+        navigate('/Admin/login');
     }
     return <StyleComponent>
         <aside className="sidebar">

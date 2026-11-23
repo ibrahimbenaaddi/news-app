@@ -36,7 +36,6 @@ enum ApiMessages: string
             self::DELETE => 'Failed to delete resource.',
             self::LOGIN => 'The email or password you entered is incorrect.',
             self::REGISTER => 'Registration could not be completed. Please try again.',
-            self::LOGOUT => 'Invalid or expired session token.',
             self::AUTH => 'Unauthenticated.',
             self::AUTHORIZATION => 'You are not allowed to perform this.',
         };

@@ -22,7 +22,16 @@ Route::prefix('v1')->group(function () {
                 Route::delete('/articles/{id}', 'destroy')->where('id', '[0-9]+');
             });
         });
+        Route::post('/login', [AuthJWTController::class, 'login']);
+        // check Refresh Token and send it 
+        Route::middleware('CheckTokenJWT')->group(function () {
+            Route::get('/amIAuth', function () {
+                return response()->json(['status' => true], 200);
+            });
+            Route::get('/refreshToken', [AuthJWTController::class, 'refreshToken']);
+        });
     });
+
     // Sanctum
     Route::prefix('admin')->group(function () {
         Route::post('/login', [AuthController::class, 'login']);
@@ -37,19 +46,5 @@ Route::prefix('v1')->group(function () {
                 Route::delete('/articles/{id}', 'destroy')->where('id', '[0-9]+');
             });
         });
-    });
-});
-
-// For Auth JwT
-
-Route::prefix('jwt/admin')->group(function () {
-
-    Route::post('/login', [AuthJWTController::class, 'login']);
-    // check Refresh Token and send it 
-    Route::middleware('CheckTokenJWT')->group(function () {
-        Route::get('/amIAuth', function () {
-            return response()->json(['status' => true], 200);
-        });
-        Route::get('/refreshToken', [AuthJWTController::class, 'refreshToken']);
     });
 });

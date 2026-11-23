@@ -10,7 +10,7 @@ export default function RouteProtected() {
     const checkIfAuth = async () => {
         api({
             // url: '/backend/api/admin/amIAuth', // for Sanctum
-            url: '/backend/api/jwt/admin/amIAuth', // for JWT
+            url: '/backend/api/v1/jwt/admin/amIAuth', // for JWT
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',

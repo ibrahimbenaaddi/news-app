@@ -6,7 +6,7 @@ export default class AuthController {
         const response = await api({
             method: 'post',
             // url: '/backend/api/admin/login', // for sanctum
-            url: '/backend/api/jwt/admin/login', // for JWT
+            url: '/backend/api/v1/jwt/admin/login', // for JWT
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
@@ -23,28 +23,22 @@ export default class AuthController {
 
     }
     async logout() {
-        const response = await api({
+        await api({
             method: 'post',
-            // url: '/backend/api/admin/logout', // fro sanctum
-            url: '/backend/api/jwt/admin/logout', // for JWT
+            // url: '/backend/v1/api/admin/logout', // fro sanctum
+            url: '/backend/api/v1/jwt/admin/logout', // for JWT
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
             }
 
-        }).catch(function (error) {
+        }).catch(function () {
             // for Sanctum
             // if (error.response.status === 401 || error.response.status === 419) {
             //     window.location.reload();
             //     return;
             // }
-            return error.response 
         });
-
-        if (response.data.status) {
-            localStorage.removeItem('admin');
-        }
-        return response.data;
-
+        localStorage.removeItem('admin');
     }
 }

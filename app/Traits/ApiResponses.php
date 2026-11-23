@@ -86,4 +86,31 @@ trait ApiResponses
             'message' => ApiMessages::DELETE->error(),
         ], 404);
     }
+
+    public static function successLogin(JsonResource $admin, mixed $token, mixed $refreshToken): JsonResponse
+    {
+        return response()->json([
+            "status" => true,
+            "message" => ApiMessages::LOGIN->success(),
+            "admin" => $admin
+        ], 200)->cookie('token', $token)
+            ->cookie('refreshToken', $refreshToken);
+    }
+
+    public static function successLogout(): JsonResponse
+    {
+        return response()->json([
+            "status" => true,
+            "message" => ApiMessages::LOGOUT->success(),
+        ], 200)->cookie('token', '', -1)
+            ->cookie('refreshToken', '', -1);
+    }
+
+    public static function failedLogin(): JsonResponse
+    {
+        return response()->json([
+            "status" => false,
+            "message" => ApiMessages::LOGIN->error()
+        ], 401);
+    }
 }

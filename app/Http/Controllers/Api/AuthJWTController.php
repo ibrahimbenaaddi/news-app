@@ -6,49 +6,33 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\loginRequest;
 use App\Http\Resources\AdminResource;
+use App\Traits\ApiResponses;
+use App\Traits\Helper;
+use App\Traits\LogError;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class AuthJWTController extends Controller
 {
-    private string $ERROR = 'your credentials is Worng !!';
+    use ApiResponses, LogError, Helper;
+
     public function login(loginRequest $request)
     {
         try {
             $credentials = $request->validated();
             $token = Auth::guard('api')->attempt($credentials); // return token JWT or false
-
-            if ( !$token  ) {
-                return response()->json(
-                    [
-                        'status' => false,
-                        'message' => $this->ERROR
-                    ],
-                    401
-                );
+            if (!$token) {
+                return self::failedLogin();
             }
             // for refreshToken
-            $expiration = 60 * 8 ;// 8 Houre
+            $expiration = 60 * 8; // 8 Houre
             $refreshToken = auth('api')->setTTL($expiration)->fromUser(auth('api')->user()); // use FromUser to generate Jwt token from the Auth admin
-            return response()->json(
-                [
-                    'status' => true,
-                    'admin'  => new AdminResource(Auth::guard('api')->user())
-                ],
-                200
-            )->cookie('token',$token)
-             ->cookie('refreshToken',$refreshToken);
-            
+
+            return self::successLogin(new AdminResource(Auth::guard('api')->user()), $token, $refreshToken);
         } catch (Exception $err) {
-            Log::error('The Error in AuthController(login) in api : ' . $err->getMessage());
-            return response()->json(
-                [
-                    'status' => false,
-                    'message' => $this->ERROR,
-                ],
-                404
-            );
+            self::theLog('login', 'AuthJWTController', $err);
+            return self::failedLogin();
         }
     }
 
@@ -58,28 +42,16 @@ class AuthJWTController extends Controller
             $refreshToken = $request->cookie('refreshToken');
             auth('api')->logout();
             auth('api')->setToken($refreshToken)->logout();
-            return response()->json(
-                [
-                    'status' => true,
-                    'message' => 'Admin logged out successfully'
-                ],
-                200
-            )->cookie('token','',-1)->cookie('refreshToken','',-1);
+            return self::successLogout();
         } catch (Exception $err) {
-            Log::error('The Error in AuthController(logout) in api : ' . $err->getMessage());
-            return response()->json(
-                [
-                    'status' => false,
-                    'message' => $err->getMessage()
-                ],
-                404
-            );
+            self::theLog('logout', 'AuthJWTController', $err);
+            return self::successLogout(); // even if has some error log the admin
         }
     }
 
     public function refreshToken()
     {
-        $newAccessToken = auth('api')->fromUser(auth('api')->user()) ;
-        return response()->json(status: 204)->cookie('token',$newAccessToken);
+        $newAccessToken = auth('api')->fromUser(auth('api')->user());
+        return response()->json(status: 204)->cookie('token', $newAccessToken);
     }
 }

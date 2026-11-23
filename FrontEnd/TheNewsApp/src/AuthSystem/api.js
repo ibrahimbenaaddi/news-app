@@ -40,9 +40,9 @@ api.interceptors.response.use((res) => {
 }, async (error) => {
     const status = error.response.status;
     const url = error.config.url;
-    if (status === 401 && url !== '/backend/api/jwt/admin/refreshToken' && url !== '/backend/api/jwt/admin/amIAuth') {
+    if (status === 401 && url !== '/backend/api/v1/jwt/admin/refreshToken' && url !== '/backend/api/v1/jwt/admin/amIAuth') {
         try {
-            await api({ method: 'get', url: '/backend/api/jwt/admin/refreshToken' });
+            await api({ method: 'get', url: '/backend/api/v1/jwt/admin/refreshToken' });
         } catch {
             window.location.reload();
         }

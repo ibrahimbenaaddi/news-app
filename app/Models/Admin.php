@@ -38,5 +38,10 @@ class Admin extends User implements JWTSubject
         'lastname',
         'email',
         'password',
+        'isAdmin', // this only for test
+    ];
+
+    protected $casts = [
+        'isAdmin' => 'boolean' // this only for test
     ];
 }

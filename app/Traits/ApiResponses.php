@@ -44,7 +44,7 @@ trait ApiResponses
             'status' => true,
             'message' => ApiMessages::UPDATE->success(),
             'data' => $resource
-        ], 201);
+        ], 200);
     }
 
     public static function delete(): JsonResponse
@@ -52,7 +52,7 @@ trait ApiResponses
         return response()->json([
             'status' => true,
             'message' => ApiMessages::DELETE->success(),
-        ], 201);
+        ], 204);
     }
 
     public static function failedRead(): JsonResponse

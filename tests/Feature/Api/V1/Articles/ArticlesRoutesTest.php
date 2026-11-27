@@ -126,4 +126,59 @@ class ArticlesRoutesTest extends TestCase
         $response->assertNoContent();
         $this->assertSoftDeleted($article);
     }
+
+    public function test_that_index_rejects_invalid_parameter(): void
+    {
+        $response = $this->getJson('/api/v1/articles?page=abc');
+        $response->assertStatus(422);
+    }
+
+    public function test_that_show_returns_not_found_for_non_valid_id(): void
+    {
+        $response = $this->getJson('/api/v1/articles/abc');
+
+        $response->assertStatus(404);
+    }
+
+    public function test_that_show_return_not_found_for_nonexistent_id(): void
+    {
+        $response = $this->getJson('/api/v1/articles/99999');
+
+        $response->assertStatus(404);
+    }
+
+
+    public function test_that_update_return_not_found_for_non_numeric_id(): void
+    {
+        $response = $this->patchJson('/api/v1/jwt/admin/articles/abc', [], [
+            'Authorization' => 'Bearer ' . $this->token
+        ]);
+        $response->assertStatus(404);
+    }
+
+    public function test_that_update_return_not_found_for_nonexistent_id(): void
+    {
+        $response = $this->patchJson('/api/v1/jwt/admin/articles/99999', [], [
+            'Authorization' => 'Bearer ' . $this->token
+        ]);
+
+        $response->assertStatus(404);
+    }
+
+    public function test_that_delete_return_not_found_for_non_numeric_id(): void
+    {
+        $response = $this->deleteJson('/api/v1/jwt/admin/articles/abc', [], [
+            'Authorization' => 'Bearer ' . $this->token
+        ]);
+        $response->assertStatus(404);
+    }
+
+    public function test_that_delete_return_not_found_for_nonexistent_id(): void
+    {
+        $response = $this->deleteJson('/api/v1/jwt/admin/articles/99999', [], [
+            'Authorization' => 'Bearer ' . $this->token
+        ]);
+
+        $response->assertStatus(404);
+    }
 }
